@@ -27,7 +27,7 @@ CREATE TABLE conductores (
 
 
 CREATE TABLE automoviles (
-  patente VARCHAR(30) NOT NULL,
+  patente VARCHAR(6) NOT NULL,
   marca VARCHAR(30) NOT NULL,
   modelo VARCHAR(30) NOT NULL,
   color VARCHAR(30) NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE tarjeta (
   id_tarjeta INT unsigned NOT NULL,
   saldo FLOAT(5,2) NOT NULL
   tipo VARCHAR(30) NOT NULL,
-  patente VARCHAR(30) NOT NULL,
+  patente VARCHAR(6) NOT NULL,
 
   CONSTRAINT pk_tarjeta
   PRIMARY KEY (id_tarjeta),
@@ -130,8 +130,8 @@ CREATE TABLE estacionamientos (
 CREATE TABLE accede (
   legajo  INT unsigned NOT NULL,
   id_parq INT unsigned NOT NULL,
-  fecha = DATE,
-  hora = TIME,
+  fecha = DATE NOT NULL,
+  hora = TIME NOT NULL,
 
   CONSTRAINT pk_accede
   PRIMARY KEY (id_parq,fecha,hora),
@@ -165,8 +165,8 @@ CREATE TABLE asociado_con (
 
 CREATE TABLE multa (
   numero INT unsigned NOT NULL,
-  fecha = DATE,
-  hora = TIME,
+  fecha = DATE NOT NULL,
+  hora = TIME NOT NULL,
   patente VARCHAR(30) NOT NULL,
   id_asociado_con INT unsigned NOT NULL,
 
@@ -180,6 +180,17 @@ CREATE TABLE multa (
 
 ) ENGINE=InnoDB;
 
+# -----------------------------------------------------------------------------
+# Creacion de vistas
+
+#BUSCAR Estacionamientos abiertos de una ubicacion
+
+CREATE VIEW estacionados AS
+SELECT DISTINCT ub.calle, ub.altura, au.patente
+FROM ubicaciones AS ub JOIN parquimetros AS pq JOIN estacionamientos AS es JOIN tarjeta AS tj JOIN automoviles AS au ON
+     ub.calle = pq.calle AND ub.altura = pq.altura AND pq.id_parq = es.id_parq AND es.id_tarjeta = tj.id_tarjeta AND tj.patente = au.patente
+
+WHERE es.hora_ent != NULL AND es.fecha_ent != NULL AND es.hora_sal = NULL AND es.fecha_sal = NULL;
 
 
 # -----------------------------------------------------------------------------
@@ -190,15 +201,27 @@ CREATE TABLE multa (
 # -----------------------------------------------------------------------------
 # Creacio de usuario administrador
 
-CREATE USER admin@localhost IDENTIFIED BY PASSWORD 'admin'
+CREATE USER admin@localhost IDENTIFIED BY 'admin'
 
 GRANT ALL PRIVILEGES ON parquimetros.* TO admin@localhost WITH GRANT OPTION;
 
 # -----------------------------------------------------------------------------
-# Creacion de otros usuarios
+# Creacion de usuario venta
 
-CREATE USER venta@'%' IDENTIFIED BY PASSWORD 'venta'
+CREATE USER venta@'%' IDENTIFIED BY 'venta'
 
+#GRANT SELECT ON parquimetros.venta_de_tarjetas TO venta@'%'; # Esto no se como va
+
+GRANT UPDATE ON parquimetros.tarjeta TO venta@'%';
+
+# -----------------------------------------------------------------------------
+# Creacion de usuario inspector
+
+CREATE USER inspector@'%' IDENTIFIED BY 'inspector'
+
+GRANT SELECT ON parquimetros.estacionados TO inspector@'%'
+
+#GRANT
 
 
 
