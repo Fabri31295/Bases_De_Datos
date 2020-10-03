@@ -14,11 +14,12 @@ USE parquimetros;
 
 CREATE TABLE conductores (
   dni INT unsigned NOT NULL,
+  registro INT unsigned NOT NULL,
   nombre VARCHAR(50) NOT NULL,
   apellido VARCHAR(50) NOT NULL,
   direccion VARCHAR(50) NOT NULL,
   telefono VARCHAR(30) NOT NULL,
-  registro VARCHAR(20) NOT NULL,
+  
 
   CONSTRAINT pk_conductores
   PRIMARY KEY (dni)
