@@ -198,6 +198,12 @@ WHERE es.hora_ent != NULL AND es.fecha_ent != NULL AND es.hora_sal = NULL AND es
   #insert into inspectores values('u1', md5('pw1'))
 
 
+
+#------------------------------------------------------------------------------
+  #Creacion de procedimiento validarLegajoPassword
+  #create procedure validarLegajoPassword (IN legajo INT, IN password VARCHAR(32), OUT resultado VARCHAR(50))
+
+
 # -----------------------------------------------------------------------------
 # Creacio de usuario administrador
 
@@ -210,7 +216,7 @@ GRANT ALL PRIVILEGES ON parquimetros.* TO admin@localhost WITH GRANT OPTION;
 
 CREATE USER venta@'%' IDENTIFIED BY 'venta'
 
-#GRANT SELECT ON parquimetros.venta_de_tarjetas TO venta@'%'; # Esto no se como va
+#GRANT SELECT ON parquimetros.tipos_tarjeta TO venta@'%';
 
 GRANT UPDATE ON parquimetros.tarjeta TO venta@'%';
 
@@ -221,7 +227,11 @@ CREATE USER inspector@'%' IDENTIFIED BY 'inspector'
 
 GRANT SELECT ON parquimetros.estacionados TO inspector@'%'
 
-#GRANT
+GRANT SELECT ON parquimetros.multa TO inspector@'%'
+
+GRANT SELECT ON parquimetros.accede TO inspector@'%'
+
+GRANT EXECUTE ON PROCEDURE parquimetros.validarLegajoPassword TO 'inspector'@'%'
 
 
 
