@@ -5,7 +5,7 @@
 
 
 # Creacion de base de datos.
-CREATE database parquimetros;
+CREATE DATABASE parquimetros;
 
 # Base de datos sobre la que se va a trabajar.
 USE parquimetros;
@@ -13,12 +13,12 @@ USE parquimetros;
 # Creacion de las tablas.
 
 CREATE TABLE conductores (
-  dni INT unsigned NOT NULL,
-  registro INT unsigned NOT NULL,
+  dni INT UNSIGNED NOT NULL,
+  registro INT UNSIGNED NOT NULL,
   nombre VARCHAR(50) NOT NULL,
   apellido VARCHAR(50) NOT NULL,
   direccion VARCHAR(50) NOT NULL,
-  telefono VARCHAR(30) NOT NULL,
+  telefono VARCHAR(30),
   
 
   CONSTRAINT pk_conductores
@@ -32,20 +32,20 @@ CREATE TABLE automoviles (
   marca VARCHAR(30) NOT NULL,
   modelo VARCHAR(30) NOT NULL,
   color VARCHAR(30) NOT NULL,
-  dni INT unsigned NOT NULL,
+  dni INT UNSIGNED NOT NULL,
 
   CONSTRAINT pk_automoviles
   PRIMARY KEY (patente),
 
   FOREIGN KEY (dni) REFERENCES conductores(dni)
-  ON DELETE RESTRICT ON UPDATE CASCADE,
+  ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
 
-CREATE TABLE tipos_tarjeta
+CREATE TABLE tipos_tarjeta (
   tipo VARCHAR(30) NOT NULL,
-  descuento FLOAT(4,2) NOT NULL,
+  descuento DECIMAL(3,2) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_tipo_ta
   PRIMARY KEY (tipo)
@@ -53,9 +53,9 @@ CREATE TABLE tipos_tarjeta
 ) ENGINE=InnoDB;
 
 
-CREATE TABLE tarjeta (
-  id_tarjeta INT unsigned NOT NULL,
-  saldo FLOAT(5,2) NOT NULL
+CREATE TABLE tarjetas (
+  id_tarjeta INT UNSIGNED NOT NULL,
+  saldo FLOAT(5,2) NOT NULL,
   tipo VARCHAR(30) NOT NULL,
   patente VARCHAR(6) NOT NULL,
 
@@ -65,14 +65,14 @@ CREATE TABLE tarjeta (
   FOREIGN KEY (tipo) REFERENCES tipos_tarjeta(tipo)
   ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (patente) REFERENCES automoviles(patente)
-  ON DELETE RESTRICT ON UPDATE CASCADE,
+  ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE inspectores (
-  legajo INT unsigned NOT NULL,
-  dni INT unsigned NOT NULL,
+  legajo INT UNSIGNED NOT NULL,
+  dni INT UNSIGNED NOT NULL,
   nombre VARCHAR(50) NOT NULL,
   apellido VARCHAR(50) NOT NULL,
   password VARCHAR(32) NOT NULL,
@@ -85,8 +85,8 @@ CREATE TABLE inspectores (
 
 CREATE TABLE ubicaciones (
   calle VARCHAR(50) NOT NULL,
-  altura INT unsigned NOT NULL,
-  tarifa float(5,2),
+  altura INT UNSIGNED NOT NULL,
+  tarifa DECIMAL(5,2) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_ubicaciones
   PRIMARY KEY (calle,altura)
@@ -95,27 +95,27 @@ CREATE TABLE ubicaciones (
 
 
 CREATE TABLE parquimetros (
-  id_parq INT unsigned NOT NULL,
-  numero INT unsigned NOT NULL,
+  id_parq INT UNSIGNED NOT NULL,
+  numero INT UNSIGNED NOT NULL,
   calle VARCHAR(50) NOT NULL,
-  altura INT unsigned NOT NULL,
+  altura INT UNSIGNED NOT NULL,
 
   CONSTRAINT pk_parquimetros
   PRIMARY KEY (id_parq),
 
   FOREIGN KEY (calle,altura) REFERENCES ubicaciones(calle,altura)
-  ON DELETE RESTRICT ON UPDATE CASCADE,
+  ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE estacionamientos (
-  id_tarjeta INT unsigned NOT NULL,
-  id_parq INT unsigned NOT NULL,
-  fecha_ent = DATE,
-  hora_ent = TIME,
-  fecha_sal = DATE,
-  hora_sal = TIME,
+  id_tarjeta INT UNSIGNED NOT NULL,
+  id_parq INT UNSIGNED NOT NULL,
+  fecha_ent DATE,
+  hora_ent TIME,
+  fecha_sal DATE,
+  hora_sal TIME,
 
   CONSTRAINT pk_estacionamientos
   PRIMARY KEY (id_parq,fecha_ent,hora_ent),
@@ -123,16 +123,16 @@ CREATE TABLE estacionamientos (
   FOREIGN KEY (id_parq) REFERENCES parquimetros(id_parq)
   ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (id_tarjeta) REFERENCES tarjeta(id_tarjeta)
-  ON DELETE RESTRICT ON UPDATE CASCADE,
+  ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE accede (
-  legajo  INT unsigned NOT NULL,
-  id_parq INT unsigned NOT NULL,
-  fecha = DATE NOT NULL,
-  hora = TIME NOT NULL,
+  legajo  INT UNSIGNED NOT NULL,
+  id_parq INT UNSIGNED NOT NULL,
+  fecha DATE NOT NULL,
+  hora TIME NOT NULL,
 
   CONSTRAINT pk_accede
   PRIMARY KEY (id_parq,fecha,hora),
@@ -140,18 +140,18 @@ CREATE TABLE accede (
   FOREIGN KEY (legajo) REFERENCES inspectores (legajo)
   ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (id_parq) REFERENCES parquimetros (id_parq)
-  ON DELETE RESTRICT ON UPDATE CASCADE,
+  ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE asociado_con (
-  id_asociado_con INT unsigned NOT NULL,
-  legajo INT unsigned NOT NULL,
+  id_asociado_con INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  legajo INT UNSIGNED NOT NULL,
   calle VARCHAR(50) NOT NULL,
-  altura INT unsigned NOT NULL,
-  dia VARCHAR(20) NOT NULL,
-  turno VARCHAR(1) NOT NULL,
+  altura INT UNSIGNED NOT NULL,
+  dia ENUM('Do','Lu','Ma','Mi','Ju','Vi','Sa'),
+  turno ENUM('M','T'),
 
   CONSTRAINT pk_asociado_con
   PRIMARY KEY (id_asociado_con),
@@ -159,17 +159,17 @@ CREATE TABLE asociado_con (
   FOREIGN KEY (legajo) REFERENCES inspectores (legajo)
   ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (calle,altura) REFERENCES ubicaciones (calle,altura)
-  ON DELETE RESTRICT ON UPDATE CASCADE,
+  ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE multa (
-  numero INT unsigned NOT NULL,
-  fecha = DATE NOT NULL,
-  hora = TIME NOT NULL,
-  patente VARCHAR(30) NOT NULL,
-  id_asociado_con INT unsigned NOT NULL,
+  numero INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  fecha DATE NOT NULL,
+  hora TIME NOT NULL,
+  patente CHAR(6) NOT NULL,
+  id_asociado_con INT UNSIGNED NOT NULL,
 
   CONSTRAINT pk_multa
   PRIMARY KEY (numero),
@@ -177,7 +177,7 @@ CREATE TABLE multa (
   FOREIGN KEY (patente) REFERENCES automoviles (patente)
   ON DELETE RESTRICT ON UPDATE CASCADE,
   FOREIGN KEY (id_asociado_con) REFERENCES asociado_con (id_asociado_con)
-  ON DELETE RESTRICT ON UPDATE CASCADE,
+  ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
@@ -206,33 +206,33 @@ WHERE es.hora_ent != NULL AND es.fecha_ent != NULL AND es.hora_sal = NULL AND es
 
 
 # -----------------------------------------------------------------------------
-# Creacio de usuario administrador
+# Creacion de usuario administrador
 
-CREATE USER admin@localhost IDENTIFIED BY 'admin'
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
 
-GRANT ALL PRIVILEGES ON parquimetros.* TO admin@localhost WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON parquimetros.* TO 'admin'@localhost WITH GRANT OPTION;
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario venta
 
-CREATE USER venta@'%' IDENTIFIED BY 'venta'
+CREATE USER 'venta'@'%' IDENTIFIED BY 'venta'
 
-#GRANT SELECT ON parquimetros.tipos_tarjeta TO venta@'%';
+#GRANT SELECT ON parquimetros.tipos_tarjeta TO 'venta'@'%';
 
-GRANT UPDATE ON parquimetros.tarjeta TO venta@'%';
+GRANT UPDATE ON parquimetros.tarjeta TO 'venta'@'%';
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario inspector
 
-CREATE USER inspector@'%' IDENTIFIED BY 'inspector'
+CREATE USER 'inspector'@'%' IDENTIFIED BY 'inspector'
 
-GRANT SELECT ON parquimetros.estacionados TO inspector@'%'
+GRANT SELECT ON parquimetros.estacionados TO 'inspector'@'%'
 
-GRANT SELECT ON parquimetros.multa TO inspector@'%'
+GRANT SELECT ON parquimetros.multa TO 'inspector'@'%'
 
-GRANT SELECT ON parquimetros.accede TO inspector@'%'
+GRANT SELECT ON parquimetros.accede TO 'inspector'@'%'
 
-GRANT EXECUTE ON PROCEDURE parquimetros.validarLegajoPassword TO 'inspector'@'%'
+#GRANT EXECUTE ON PROCEDURE parquimetros.validarLegajoPassword TO 'inspector'@'%'
 
 
 
