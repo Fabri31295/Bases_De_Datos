@@ -47,16 +47,15 @@ CREATE TABLE tipos_tarjeta (
   tipo VARCHAR(30) NOT NULL,
   descuento DECIMAL(3,2) UNSIGNED NOT NULL,
 
-  CONSTRAINT c_descuento CHECK (descuento>=0 and descuento<=1)
-  CONSTRAINT pk_tipo_ta
+  CONSTRAINT pk_tipo_tarjeta
   PRIMARY KEY (tipo)
 
 ) ENGINE=InnoDB;
 
 
 CREATE TABLE tarjetas (
-  id_tarjeta INT UNSIGNED NOT NULL,
-  saldo FLOAT(5,2) NOT NULL,
+  id_tarjeta INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  saldo DECIMAL(5,2) NOT NULL,
   tipo VARCHAR(30) NOT NULL,
   patente VARCHAR(6) NOT NULL,
 
@@ -113,8 +112,8 @@ CREATE TABLE parquimetros (
 CREATE TABLE estacionamientos (
   id_tarjeta INT UNSIGNED NOT NULL,
   id_parq INT UNSIGNED NOT NULL,
-  fecha_ent DATE,
-  hora_ent TIME,
+  fecha_ent DATE NOT NULL,
+  hora_ent TIME NOT NULL,
   fecha_sal DATE,
   hora_sal TIME,
 
@@ -216,7 +215,7 @@ GRANT ALL PRIVILEGES ON parquimetros.* TO 'admin'@'localhost' WITH GRANT OPTION;
 # -----------------------------------------------------------------------------
 # Creacion de usuario venta
 
-CREATE USER 'venta'@'%' IDENTIFIED BY 'venta'
+CREATE USER 'venta'@'%' IDENTIFIED BY 'venta';
 
 #GRANT SELECT ON parquimetros.tipos_tarjeta TO 'venta'@'%';
 
@@ -225,7 +224,7 @@ GRANT UPDATE ON parquimetros.tarjeta TO 'venta'@'%';
 # -----------------------------------------------------------------------------
 # Creacion de usuario inspector
 
-CREATE USER 'inspector'@'%' IDENTIFIED BY 'inspector'
+CREATE USER 'inspector'@'%' IDENTIFIED BY 'inspector';
 
 GRANT SELECT ON parquimetros.estacionados TO 'inspector'@'%'
 
