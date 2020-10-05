@@ -47,6 +47,7 @@ CREATE TABLE tipos_tarjeta (
   tipo VARCHAR(30) NOT NULL,
   descuento DECIMAL(3,2) UNSIGNED NOT NULL,
 
+  CONSTRAINT c_descuento CHECK (descuento>=0 and descuento<=1)
   CONSTRAINT pk_tipo_ta
   PRIMARY KEY (tipo)
 
