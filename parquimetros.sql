@@ -151,8 +151,8 @@ CREATE TABLE asociado_con (
   legajo INT UNSIGNED NOT NULL,
   calle VARCHAR(50) NOT NULL,
   altura INT UNSIGNED NOT NULL,
-  dia ENUM('Do','Lu','Ma','Mi','Ju','Vi','Sa'),
-  turno ENUM('M','T'),
+  dia ENUM('Do','Lu','Ma','Mi','Ju','Vi','Sa') NOT NULL,
+  turno ENUM('M','T') NOT NULL,
 
   CONSTRAINT pk_asociado_con
   PRIMARY KEY (id_asociado_con),
@@ -211,7 +211,7 @@ WHERE es.hora_ent != NULL AND es.fecha_ent != NULL AND es.hora_sal = NULL AND es
 
 CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
 
-GRANT ALL PRIVILEGES ON parquimetros.* TO 'admin'@localhost WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON parquimetros.* TO 'admin'@'localhost' WITH GRANT OPTION;
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario venta
