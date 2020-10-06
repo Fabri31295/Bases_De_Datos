@@ -94,51 +94,110 @@ VALUES(1576,0.00);
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
 VALUES(101,101,'Nombre_insp101','Apellido_insp101',md5('insp101'));
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
-VALUES(102,102,'Nombre_insp102','Apellido_insp102',md5('insp101'));
+VALUES(102,102,'Nombre_insp102','Apellido_insp102',md5('insp102'));
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
-VALUES(103,103,'Nombre_insp103','Apellido_insp103',md5('insp101'));
+VALUES(103,103,'Nombre_insp103','Apellido_insp103',md5('insp103'));
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
-VALUES(104,104,'Nombre_insp104','Apellido_insp104',md5('insp101'));
+VALUES(104,104,'Nombre_insp104','Apellido_insp104',md5('insp104'));
 
 # -----------------------------------------------------------------------------
 # UBICACIONES
 
 INSERT INTO ubicaciones(calle,altura,tarifa)
-VALUES('calle1',789,10.35),
+VALUES('calle1',789,10.35);
 INSERT INTO ubicaciones(calle,altura,tarifa)
-VALUES('calle2',89,3.75),
+VALUES('calle2',89,3.75);
 INSERT INTO ubicaciones(calle,altura,tarifa)
-VALUES('calle3',149,2.78),
+VALUES('calle3',149,2.78);
 INSERT INTO ubicaciones(calle,altura,tarifa)
-VALUES('calle4',1009,1.50),
+VALUES('calle4',1009,1.50);
 INSERT INTO ubicaciones(calle,altura,tarifa)
-VALUES('calle5',298,5.05),
+VALUES('calle5',298,5.05);
 INSERT INTO ubicaciones(calle,altura,tarifa)
-VALUES('calle6',875,7.00),
+VALUES('calle6',875,7.00);
 
 # -----------------------------------------------------------------------------
 # PARQUIMETROS
 
 INSERT INTO parquimetros(id_parq,numero)
-VALUES(11,1),
+VALUES(11,1);
 INSERT INTO parquimetros(id_parq,numero)
-VALUES(12,2),
+VALUES(12,2);
 INSERT INTO parquimetros(id_parq,numero)
-VALUES(13,3),
+VALUES(13,3);
 INSERT INTO parquimetros(id_parq,numero)
-VALUES(14,4),
+VALUES(14,4);
 INSERT INTO parquimetros(id_parq,numero)
-VALUES(15,5),
+VALUES(15,5);
 INSERT INTO parquimetros(id_parq,numero)
-VALUES(16,6),
+VALUES(16,6);
 INSERT INTO parquimetros(id_parq,numero)
-VALUES(17,7),
+VALUES(17,7);
 
 # -----------------------------------------------------------------------------
 # ESTACIONAMIENTOS
 
 INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES()
+VALUES('02-09-20','17:00:00',NULL,NULL);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
+VALUES('03-12-12','12:00:00',NULL,NULL);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
+VALUES('06-10-10','09:00:00',NULL,NULL);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
+VALUES('02-08-20','18:00:00',NULL,NULL);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
+VALUES('03-04-20','22:00:00',NULL,NULL);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
+VALUES('02-08-18','10:00:00',NULL,NULL);
 
+# -----------------------------------------------------------------------------
+# ACCEDE
 
-# Falta ACCEDE, ASOCIADO_CON y MULTA, hay que ver como se pone la fecha y hora
+INSERT INTO accede(fecha,hora)
+VALUES('02-08-20','19:00:00');
+INSERT INTO accede(fecha,hora)
+VALUES('01-07-15','20:00:00');
+INSERT INTO accede(fecha,hora)
+VALUES('02-03-16','22:00:00');
+INSERT INTO accede(fecha,hora)
+VALUES('09-04-17','07:00:00');
+INSERT INTO accede(fecha,hora)
+VALUES('23-02-18','09:00:00');
+INSERT INTO accede(fecha,hora)
+VALUES('21-05-20','11:00:00');
+INSERT INTO accede(fecha,hora)
+VALUES('19-08-20','10:00:00');
+
+# -----------------------------------------------------------------------------
+# ASOCIADO_CON
+
+INSERT INTO asociado_con(id_asociado_con,dia,turno)
+VALUES(101,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-01-03')),'M');
+INSERT INTO asociado_con(id_asociado_con,dia,turno)
+VALUES(102,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-07-04')),'M');
+INSERT INTO asociado_con(id_asociado_con,dia,turno)
+VALUES(103,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-05-05')),'M');
+INSERT INTO asociado_con(id_asociado_con,dia,turno)
+VALUES(104,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-04-06')),'T');
+INSERT INTO asociado_con(id_asociado_con,dia,turno)
+VALUES(105,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-03-07')),'T');
+INSERT INTO asociado_con(id_asociado_con,dia,turno)
+VALUES(106,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-02-08')),'T');
+
+# -----------------------------------------------------------------------------
+# MULTA
+
+INSERT INTO multa(numero,fecha,hora)
+VALUES(1,'02-08-20','19:00:00');
+INSERT INTO multa(numero,fecha,hora)
+VALUES(2,'03-09-10','11:00:00');
+INSERT INTO multa(numero,fecha,hora)
+VALUES(3,'22-08-12','20:00:00');
+INSERT INTO multa(numero,fecha,hora)
+VALUES(4,'23-08-17','22:00:00');
+INSERT INTO multa(numero,fecha,hora)
+VALUES(5,'02-12-20','17:00:00');
+
+#-----------------------------------------------------------------------------
+
+DROP FUNCTION dia;
