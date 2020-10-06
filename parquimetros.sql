@@ -215,7 +215,7 @@ GRANT UPDATE ON parquimetros.tarjetas TO 'venta'@'%';
 
 CREATE USER 'inspector'@'%' IDENTIFIED BY 'inspector';
 
-GRANT SELECT ON parquimetros.inspector TO 'inspector'@'%';
+GRANT SELECT ON parquimetros.inspectores TO 'inspector'@'%';
 
 GRANT SELECT, INSERT ON parquimetros.multa TO 'inspector'@'%';
 
