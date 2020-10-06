@@ -6,6 +6,20 @@ USE parquimetros;
 
 SET NAMES latin1;
 
+DELETE FROM conductores;
+DELETE FROM automoviles;
+DELETE FROM tipos_tarjeta;
+DELETE FROM tarjetas;
+DELETE FROM inspectores;
+DELETE FROM ubicaciones;
+DELETE FROM parquimetros;
+DELETE FROM estacionamientos;
+DELETE FROM accede;
+DELETE FROM asociado_con;
+DELETE FROM multa;
+
+DELIMITER !
+
 
 CREATE FUNCTION dia(fecha DATE) RETURNS CHAR(2)
 DETERMINISTIC
@@ -30,75 +44,77 @@ DELIMITER ;
 # CONDUCTORES
 
 INSERT INTO conductores(dni,nombre,apellido,direccion,telefono,registro)
-VALUES (61891198,'Ronaldo','Nazario','Alem','1234','123456789',419053)
+VALUES (101,'Ronaldo','Nazario','Alem 1234','123456789',1001);
 INSERT INTO conductores(dni,nombre,apellido,direccion,telefono,registro)
-VALUES (52217535,'Lionel','Messi','Don Bosco','789','148656789',491881);
+VALUES (102,'Lionel','Messi','Don Bosco 789','148656789',1002);
 INSERT INTO conductores(dni,nombre,apellido,direccion,telefono,registro)
-VALUES (74185268,'Cristiano','Ronaldo','Salta','95','951256789',643722);
+VALUES (103,'Cristiano','Ronaldo','Salta 95','951256789',1003);
 INSERT INTO conductores(dni,nombre,apellido,direccion,telefono,registro)
-VALUES (13245879,'Sergio','Aguero','Sgo del estero','985','175316789',388754);
+VALUES (104,'Sergio','Aguero','Sgo del estero 985','175316789',1004);
 INSERT INTO conductores(dni,nombre,apellido,direccion,telefono,registro)
-VALUES (21528879,'Carlos','Tevez','Trelew','345','123459632',804159);
+VALUES (105,'Carlos','Tevez','Trelew 345','123459632',1005);
 INSERT INTO conductores(dni,nombre,apellido,direccion,telefono,registro)
-VALUES (31544998,'Nestor','Ortigoza','12 de Octubre','134','123587489',697870);
+VALUES (106,'Nestor','Ortigoza','12 de Octubre 134','123587489',1006);
 
 # -----------------------------------------------------------------------------
 # AUTOMOVILES
 
-INSERT INTO automoviles(patente,marca,modelo,color)
-VALUES('abc123','Fiat','600','amarillo');
-INSERT INTO automoviles(patente,marca,modelo,color)
-VALUES('brw793','Ford','Focus','gris');
-INSERT INTO automoviles(patente,marca,modelo,color)
-VALUES('jod800','Alfa Romeo','Mito','rojo');
-INSERT INTO automoviles(patente,marca,modelo,color)
-VALUES('sie098','Lamborghini','Aventador','verde');
-INSERT INTO automoviles(patente,marca,modelo,color)
-VALUES('jhg890','Pagani','Zonda','azul');
-INSERT INTO automoviles(patente,marca,modelo,color)
-VALUES('rft543','Renault','12','violeta');
+INSERT INTO automoviles(patente,marca,modelo,color,dni)
+VALUES('abc123','Fiat','600','amarillo',101);
+INSERT INTO automoviles(patente,marca,modelo,color,dni)
+VALUES('brw793','Ford','Focus','gris',102);
+INSERT INTO automoviles(patente,marca,modelo,color,dni)
+VALUES('jod800','Alfa Romeo','Mito','rojo',103);
+INSERT INTO automoviles(patente,marca,modelo,color,dni)
+VALUES('sie098','Lamborghini','Aventador','verde',104);
+INSERT INTO automoviles(patente,marca,modelo,color,dni)
+VALUES('jhg890','Pagani','Zonda','azul',105);
+INSERT INTO automoviles(patente,marca,modelo,color,dni)
+VALUES('rft543','Renault','12','violeta',106);
 
 # -----------------------------------------------------------------------------
 # TIPOS DE TARJETAS
 
 INSERT INTO tipos_tarjeta(tipo,descuento)
-VALUES('tipo1',0.10);
+VALUES('t1',0.10);
 INSERT INTO tipos_tarjeta(tipo,descuento)
-VALUES('tipo2',0.20);
+VALUES('t2',0.20);
 INSERT INTO tipos_tarjeta(tipo,descuento)
-VALUES('tipo3',0.30);
+VALUES('t3',0.30);
 INSERT INTO tipos_tarjeta(tipo,descuento)
-VALUES('tipo4',0.40);
+VALUES('t4',0.40);
 
 # -----------------------------------------------------------------------------
-# TARJETA
+# TARJETAS
 
-INSERT INTO tarjeta(id_tarjeta,saldo)
-VALUES(9876,115.25);
-INSERT INTO tarjeta(id_tarjeta,saldo)
-VALUES(1234,130.85);
-INSERT INTO tarjeta(id_tarjeta,saldo)
-VALUES(4567,1.50);
-INSERT INTO tarjeta(id_tarjeta,saldo)
-VALUES(8745,78.05);
-INSERT INTO tarjeta(id_tarjeta,saldo)
-VALUES(2354,206.35);
-INSERT INTO tarjeta(id_tarjeta,saldo)
-VALUES(9658,989.99);
-INSERT INTO tarjeta(id_tarjeta,saldo)
-VALUES(1576,0.00);
+INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
+VALUES(9876,115.25,'t1','abc123');
+INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
+VALUES(1234,130.85,'t1','brw793');
+INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
+VALUES(4567,1.50,'t2','jod800');
+INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
+VALUES(8745,78.05,'t3','sie098');
+INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
+VALUES(2354,206.35,'t4','jhg890');
+INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
+VALUES(9658,989.99,'t3','rft543');
 
 # -----------------------------------------------------------------------------
 # INSPECTORES
 
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
-VALUES(101,101,'Nombre_insp101','Apellido_insp101',md5('insp101'));
+VALUES(101,107,'Nombre_insp101','Apellido_insp101',md5('insp101'));
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
-VALUES(102,102,'Nombre_insp102','Apellido_insp102',md5('insp102'));
+VALUES(102,108,'Nombre_insp102','Apellido_insp102',md5('insp102'));
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
-VALUES(103,103,'Nombre_insp103','Apellido_insp103',md5('insp103'));
+VALUES(103,109,'Nombre_insp103','Apellido_insp103',md5('insp103'));
 INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
-VALUES(104,104,'Nombre_insp104','Apellido_insp104',md5('insp104'));
+VALUES(104,110,'Nombre_insp104','Apellido_insp104',md5('insp104'));
+INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
+VALUES(105,111,'Nombre_insp105','Apellido_insp105',md5('insp105'));
+INSERT INTO inspectores(legajo,dni,nombre,apellido,password)
+VALUES(106,112,'Nombre_insp106','Apellido_insp106',md5('insp106'));
 
 # -----------------------------------------------------------------------------
 # UBICACIONES
@@ -119,84 +135,78 @@ VALUES('calle6',875,7.00);
 # -----------------------------------------------------------------------------
 # PARQUIMETROS
 
-INSERT INTO parquimetros(id_parq,numero)
-VALUES(11,1);
-INSERT INTO parquimetros(id_parq,numero)
-VALUES(12,2);
-INSERT INTO parquimetros(id_parq,numero)
-VALUES(13,3);
-INSERT INTO parquimetros(id_parq,numero)
-VALUES(14,4);
-INSERT INTO parquimetros(id_parq,numero)
-VALUES(15,5);
-INSERT INTO parquimetros(id_parq,numero)
-VALUES(16,6);
-INSERT INTO parquimetros(id_parq,numero)
-VALUES(17,7);
+INSERT INTO parquimetros(id_parq,numero,calle,altura)
+VALUES(111,1,'calle1',789);
+INSERT INTO parquimetros(id_parq,numero,calle,altura)
+VALUES(222,2,'calle2',89);
+INSERT INTO parquimetros(id_parq,numero,calle,altura)
+VALUES(333,3,'calle3',149);
+INSERT INTO parquimetros(id_parq,numero,calle,altura)
+VALUES(444,4,'calle4',1009);
+INSERT INTO parquimetros(id_parq,numero,calle,altura)
+VALUES(555,5,'calle5',298);
+INSERT INTO parquimetros(id_parq,numero,calle,altura)
+VALUES(666,6,'calle6',875);
 
 # -----------------------------------------------------------------------------
 # ESTACIONAMIENTOS
 
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES('02-09-20','17:00:00',NULL,NULL);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES('03-12-12','12:00:00',NULL,NULL);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES('06-10-10','09:00:00',NULL,NULL);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES('02-08-20','18:00:00',NULL,NULL);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES('03-04-20','22:00:00',NULL,NULL);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES('02-08-18','10:00:00',NULL,NULL);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES('02-09-20','17:00:00',NULL,NULL,9876,111);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES('03-12-12','12:00:00',NULL,NULL,1234,222);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES('06-10-10','09:00:00',NULL,NULL,4567,333);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES('02-08-20','18:00:00',NULL,NULL,8745,444);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES('03-04-20','22:00:00',NULL,NULL,2354,555);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES('02-08-18','10:00:00',NULL,NULL,9658,666);
 
 # -----------------------------------------------------------------------------
 # ACCEDE
 
-INSERT INTO accede(fecha,hora)
-VALUES('02-08-20','19:00:00');
-INSERT INTO accede(fecha,hora)
-VALUES('01-07-15','20:00:00');
-INSERT INTO accede(fecha,hora)
-VALUES('02-03-16','22:00:00');
-INSERT INTO accede(fecha,hora)
-VALUES('09-04-17','07:00:00');
-INSERT INTO accede(fecha,hora)
-VALUES('23-02-18','09:00:00');
-INSERT INTO accede(fecha,hora)
-VALUES('21-05-20','11:00:00');
-INSERT INTO accede(fecha,hora)
-VALUES('19-08-20','10:00:00');
+INSERT INTO accede(legajo,id_parq,fecha,hora)
+VALUES(101,111,'02-08-20','19:00:00');
+INSERT INTO accede(legajo,id_parq,fecha,hora)
+VALUES(102,222,'01-07-15','20:00:00');
+INSERT INTO accede(legajo,id_parq,fecha,hora)
+VALUES(103,333,'02-03-16','22:00:00');
+INSERT INTO accede(legajo,id_parq,fecha,hora)
+VALUES(104,444,'09-04-17','07:00:00');
+INSERT INTO accede(legajo,id_parq,fecha,hora)
+VALUES(105,555,'23-02-18','09:00:00');
+INSERT INTO accede(legajo,id_parq,fecha,hora)
+VALUES(106,666,'21-05-20','11:00:00');
 
 # -----------------------------------------------------------------------------
 # ASOCIADO_CON
 
-INSERT INTO asociado_con(id_asociado_con,dia,turno)
-VALUES(101,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-01-03')),'M');
-INSERT INTO asociado_con(id_asociado_con,dia,turno)
-VALUES(102,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-07-04')),'M');
-INSERT INTO asociado_con(id_asociado_con,dia,turno)
-VALUES(103,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-05-05')),'M');
-INSERT INTO asociado_con(id_asociado_con,dia,turno)
-VALUES(104,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-04-06')),'T');
-INSERT INTO asociado_con(id_asociado_con,dia,turno)
-VALUES(105,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-03-07')),'T');
-INSERT INTO asociado_con(id_asociado_con,dia,turno)
-VALUES(106,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-02-08')),'T');
+INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
+VALUES(101,1001,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-01-03')),'M','calle1',789);
+INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
+VALUES(102,1002,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-07-04')),'M','calle2',89);
+INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
+VALUES(103,1003,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-05-05')),'M','calle3',149);
+INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
+VALUES(104,1004,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-04-06')),'T','calle4',1009);
+INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
+VALUES(105,1005,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-03-07')),'T','calle5',298);
+INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
+VALUES(106,1006,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-02-08')),'T','calle6',875);
 
 # -----------------------------------------------------------------------------
 # MULTA
 
-INSERT INTO multa(numero,fecha,hora)
-VALUES(1,'02-08-20','19:00:00');
-INSERT INTO multa(numero,fecha,hora)
-VALUES(2,'03-09-10','11:00:00');
-INSERT INTO multa(numero,fecha,hora)
-VALUES(3,'22-08-12','20:00:00');
-INSERT INTO multa(numero,fecha,hora)
-VALUES(4,'23-08-17','22:00:00');
-INSERT INTO multa(numero,fecha,hora)
-VALUES(5,'02-12-20','17:00:00');
+INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
+VALUES(1,'02-08-20','19:00:00','abc123',1001);
+INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
+VALUES(2,'03-09-10','11:00:00','brw793',1002);
+INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
+VALUES(3,'22-08-12','20:00:00','jod800',1003);
+INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
+VALUES(4,'23-08-17','22:00:00','sie098',1004);
 
 #-----------------------------------------------------------------------------
 

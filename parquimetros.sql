@@ -15,7 +15,7 @@ CREATE TABLE conductores (
   apellido VARCHAR(50) NOT NULL,
   direccion VARCHAR(50) NOT NULL,
   telefono VARCHAR(30),
-  
+
 
   CONSTRAINT pk_conductores
   PRIMARY KEY (dni)
@@ -106,13 +106,13 @@ CREATE TABLE parquimetros (
 
 
 CREATE TABLE estacionamientos (
-  id_tarjeta INT UNSIGNED NOT NULL,
-  id_parq INT UNSIGNED NOT NULL,
   fecha_ent DATE NOT NULL,
   hora_ent TIME NOT NULL,
   fecha_sal DATE,
   hora_sal TIME,
-
+  id_tarjeta INT UNSIGNED NOT NULL,
+  id_parq INT UNSIGNED NOT NULL,
+  
   CONSTRAINT pk_estacionamientos
   PRIMARY KEY (id_parq,fecha_ent,hora_ent),
 
@@ -231,6 +231,3 @@ GRANT SELECT ON parquimetros.multa TO 'inspector'@'%';
 #GRANT SELECT ON parquimetros.accede TO 'inspector'@'%';
 
 #GRANT EXECUTE ON PROCEDURE parquimetros.validarLegajoPassword TO 'inspector'@'%';
-
-
-
