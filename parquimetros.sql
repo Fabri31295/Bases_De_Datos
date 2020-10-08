@@ -187,7 +187,7 @@ SELECT DISTINCT ub.calle, ub.altura, au.patente
 FROM ubicaciones AS ub JOIN parquimetros AS pq JOIN estacionamientos AS es JOIN tarjetas AS tj JOIN automoviles AS au ON
      ub.calle = pq.calle AND ub.altura = pq.altura AND pq.id_parq = es.id_parq AND es.id_tarjeta = tj.id_tarjeta AND tj.patente = au.patente
 
-WHERE es.hora_ent != NULL AND es.fecha_ent != NULL AND es.hora_sal = NULL AND es.fecha_sal = NULL;
+WHERE es.hora_ent is not NULL AND es.fecha_ent is not NULL AND es.hora_sal is NULL AND es.fecha_sal is NULL;
 
 
 # -----------------------------------------------------------------------------
@@ -208,7 +208,9 @@ CREATE USER 'venta'@'%' IDENTIFIED BY 'venta';
 
 GRANT SELECT ON parquimetros.tipos_tarjeta TO 'venta'@'%';
 
-GRANT UPDATE ON parquimetros.tarjetas TO 'venta'@'%';
+GRANT SELECT, INSERT ON parquimetros.tarjetas TO 'venta'@'%';
+
+GRANT SELECT ON parquimetros.automoviles TO 'venta'@'%';
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario inspector
