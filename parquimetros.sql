@@ -1,11 +1,12 @@
 # Autores: Almaraz Fabricio, Pacione Luciano
-
+# -----------------------------------------------------------------------------
 # Creacion de base de datos.
 CREATE DATABASE parquimetros;
 
 # Base de datos sobre la que se va a trabajar.
 USE parquimetros;
 
+# -----------------------------------------------------------------------------
 # Creacion de las tablas.
 
 CREATE TABLE conductores (
@@ -178,7 +179,7 @@ CREATE TABLE multa (
 ) ENGINE=InnoDB;
 
 # -----------------------------------------------------------------------------
-# Creacion de vistas
+# Creacion de vista estacionados
 
 #BUSCAR Estacionamientos abiertos de una ubicacion
 
@@ -188,11 +189,6 @@ FROM ubicaciones AS ub JOIN parquimetros AS pq JOIN estacionamientos AS es JOIN 
      ub.calle = pq.calle AND ub.altura = pq.altura AND pq.id_parq = es.id_parq AND es.id_tarjeta = tj.id_tarjeta AND tj.patente = au.patente
 
 WHERE es.hora_ent is not NULL AND es.fecha_ent is not NULL AND es.hora_sal is NULL AND es.fecha_sal is NULL;
-
-
-# -----------------------------------------------------------------------------
-  # Funcion hash para nombre de usuario y password
-  #insert into inspectores values('u1', md5('pw1'))
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario administrador
@@ -225,5 +221,4 @@ GRANT SELECT ON parquimetros.estacionados TO 'inspector'@'%';
 
 GRANT SELECT, INSERT ON parquimetros.accede TO 'inspector'@'%';
 
-
-
+# -----------------------------------------------------------------------------
