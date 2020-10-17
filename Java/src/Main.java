@@ -1,29 +1,23 @@
 // Almaraz Fabricio, Pacione Luciano
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import quick.dbtable.DBTable;
 
-@SuppressWarnings("serial")
-public class Main extends JFrame{
+public class Main extends JFrame {
 
-	private MainPanel contentPane;
-	private JTextField tFieldUser;
-	private JLabel lblUser, lblPassword;
-	private JPasswordField passwordField;
-	private JButton btnLogin, btnCancel;
-	private DataBaseConnection connection;
-	private JMenuItem mntmLogout;
-	/private static JFrame INSTANCE;
-	
-	public static void main(String args[]) {
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow frame = new MainWindow();
+					Main frame = new Main();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -31,5 +25,17 @@ public class Main extends JFrame{
 			}
 		});
 	}
-	
+
+	/**
+	 * Create the frame.
+	 */
+	public Main() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+	}
+
 }
