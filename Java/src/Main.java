@@ -2,13 +2,27 @@
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 public class Main extends JFrame {
 
 	private JPanel contentPane;
+	//private Main2 contentPane;
+	private JTextField tFieldUser;
+	private JLabel lblUser, lblPassword;
+	private JPasswordField passwordField;
+	private JButton btnLogin, btnCancel;
+	private Conection connection;
+	private JMenuItem mntmLogout;
+	private static JFrame INSTANCE;
 
 	/**
 	 * Launch the application.
@@ -24,6 +38,13 @@ public class Main extends JFrame {
 				}
 			}
 		});
+	}
+	
+	public static JFrame getInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new Main();
+		}
+		return INSTANCE;
 	}
 
 	/**
