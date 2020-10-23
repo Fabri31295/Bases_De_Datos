@@ -9,11 +9,19 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Rectangle;
 
 
 public class VentanaValidacion extends javax.swing.JFrame{
+	
+	protected Connection conexionBD = null;
+	
+	private static VentanaValidacion instancia;
+
 	
 	private JLabel labelUsuario;
 	private JLabel labelContraseña;
@@ -21,13 +29,9 @@ public class VentanaValidacion extends javax.swing.JFrame{
 	private JPasswordField textContraseña;
 
 
-	private static String password = "admin";
-	private static String user = "admin";
 	private JButton btnAceptar;
 
-	/**
-	 * Launch the application.
-	 */
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -41,12 +45,14 @@ public class VentanaValidacion extends javax.swing.JFrame{
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
-	public VentanaValidacion() {
+	public static VentanaValidacion getInstancia() {
+		if(instancia==null) {
+			instancia = new VentanaValidacion();
+		}
+		return instancia;
+	}
+	private VentanaValidacion() {
 		super();
-		setMaximizedBounds(new Rectangle(0, 0, 0, 0));
 		initialize();
 	}
 
@@ -60,6 +66,7 @@ public class VentanaValidacion extends javax.swing.JFrame{
 		getContentPane().setLayout(null);
 		this.setTitle("Autenticación");
 		this.setResizable(true);
+		this.setVisible(false);
 		
 		labelUsuario = new JLabel("Usuario");
 		labelUsuario.setBounds(85, 59, 76, 14);
@@ -81,26 +88,73 @@ public class VentanaValidacion extends javax.swing.JFrame{
 		btnAceptar = new JButton("Aceptar");
 		btnAceptar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				verificacion();
+				aceptar();
 			}
 		});
 		btnAceptar.setBounds(156, 184, 86, 20);
 		getContentPane().add(btnAceptar);
 	}
 	
-	private void verificacion() {
+	private void aceptar() {
 		String userIngresado = textUsuario.getText();
 		String passwordIngresado = new String(textContraseña.getPassword());
-		if((user.compareTo(userIngresado)) == 0 && (password.compareTo(passwordIngresado) == 0)) {
+		
+		conectarBD(userIngresado,passwordIngresado);
+		
+		if(conexionBD != null) {
 			setVisible(false);
-			VentanaConsultas v = new VentanaConsultas ();
-			v.llenarListaTablas();
-		}
-		else {
-			JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
-			textUsuario.setText("");
-			textContraseña.setText("");
+			VentanaPrincipal p = VentanaPrincipal.getInstancia();
+			p.setVisible(false);
+			VentanaConsultas c = VentanaConsultas.getInstancia();
+			c.llenarListaTablas();
+			desconectarBD();
 			
 		}
+		textUsuario.setText("");
+		textContraseña.setText("");
+		
 	}
+	
+	private boolean conectarBD(String user, String password)
+	   {
+	      if (conexionBD == null)
+	      {             
+	         try
+	         {  
+	            String servidor = "localhost:3306";
+	            String baseDatos = "parquimetros";
+	            String usuario = user;
+	            String clave = password;
+	            String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos + 
+	            		          "?serverTimezone=America/Argentina/Buenos_Aires";
+	            conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
+	            
+	            return true;
+	          
+	         }
+	         catch (SQLException ex)
+	         {
+	        	 JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
+	         }
+	      }
+	     return false;
+	   }
+
+	   private void desconectarBD()
+	   {
+	      if (this.conexionBD != null)
+	      {
+	         try
+	         {
+	            this.conexionBD.close();
+	            this.conexionBD = null;
+	         }
+	         catch (SQLException ex)
+	         {
+	            System.out.println("SQLException: " + ex.getMessage());
+	            System.out.println("SQLState: " + ex.getSQLState());
+	            System.out.println("VendorError: " + ex.getErrorCode());
+	         }
+	      }
+	   }
 }

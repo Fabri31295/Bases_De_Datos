@@ -37,6 +37,8 @@ import javax.swing.JSeparator;
 public class VentanaConsultas extends javax.swing.JFrame{
 
 	protected Connection conexionBD = null;
+
+	private static VentanaConsultas instancia;
 	
 	private JTextArea textConsulta;
 	private JButton btnConsultar;
@@ -69,10 +71,14 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
-	public VentanaConsultas() {
+	public static VentanaConsultas getInstancia() {
+		if(instancia==null) {
+			instancia = new VentanaConsultas();
+		}
+		return instancia;
+	}
+	
+	private VentanaConsultas() {
 		super();
 		initialize();
 	}
@@ -97,7 +103,7 @@ public class VentanaConsultas extends javax.swing.JFrame{
 				obtenerTabla();
 			}
 		});
-		btnConsultar.setBounds(454, 12, 160, 23);
+		btnConsultar.setBounds(454, 12, 160, 35);
 		getContentPane().add(btnConsultar);
 		
 		btnLimpiar = new JButton("Limpiar");
@@ -107,43 +113,28 @@ public class VentanaConsultas extends javax.swing.JFrame{
 				limpiarTabla();
 			}
 		});
-		btnLimpiar.setBounds(454, 62, 160, 23);
+		btnLimpiar.setBounds(454, 62, 160, 35);
 		getContentPane().add(btnLimpiar);
 		
 		scrollPaneTablas = new ScrollPane();
 		scrollPaneTablas.setBounds(new Rectangle(0, 0, 200, 200));
-		scrollPaneTablas.setBounds(454, 145, 160, 130);
+		scrollPaneTablas.setBounds(454, 127, 160, 110);
 		getContentPane().add(scrollPaneTablas);
 		
 		scrollPaneAtributos = new ScrollPane();
 		scrollPaneAtributos.setBounds(new Rectangle(0, 0, 200, 200));
-		scrollPaneAtributos.setBounds(454, 301, 160, 130);
+		scrollPaneAtributos.setBounds(454, 263, 160, 110);
 		getContentPane().add(scrollPaneAtributos);
 		
 		labelTablas = new JLabel("Tablas");
 		labelTablas.setHorizontalAlignment(SwingConstants.CENTER);
-		labelTablas.setBounds(454, 125, 160, 14);
+		labelTablas.setBounds(454, 107, 160, 14);
 		getContentPane().add(labelTablas);
 		
 		labelAtributos = new JLabel("Atributos");
 		labelAtributos.setHorizontalAlignment(SwingConstants.CENTER);
-		labelAtributos.setBounds(454, 281, 160, 14);
+		labelAtributos.setBounds(454, 243, 160, 14);
 		getContentPane().add(labelAtributos);
-		
-		listaAtributos = new JList();
-		scrollPaneAtributos.add(listaAtributos);
-		listaAtributos.setBounds(454, 301, 160, 130);
-		
-		listaTablas = new JList();
-		scrollPaneTablas.add(listaTablas);
-		listaTablas.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				obtenerAtributosTabla();
-			}
-		});
-		listaTablas.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		listaTablas.setBounds(454, 145, 160, 130);
 		
 		scrollPaneConsulta = new ScrollPane();
 		scrollPaneConsulta.setBounds(10, 125, 388, 306);
@@ -161,6 +152,33 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		separatorVertical.setOrientation(SwingConstants.VERTICAL);
 		separatorVertical.setBounds(426, 24, 19, 407);
 		getContentPane().add(separatorVertical);
+		
+		listaTablas = new JList();
+		scrollPaneTablas.add(listaTablas);
+		listaTablas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				obtenerAtributosTabla();
+			}
+		});
+		listaTablas.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		listaTablas.setBounds(454, 127, 156, 110);
+		
+		listaAtributos = new JList();
+		scrollPaneAtributos.add(listaAtributos);
+		listaAtributos.setBounds(454, 263, 156, 110);
+		
+		JButton btnCerrarSesion = new JButton("Cerrar Sesion");
+		btnCerrarSesion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaPrincipal v = VentanaPrincipal.getInstancia();
+				v.setVisible(true);
+				setVisible(false);
+				desconectarBD();
+			}
+		});
+		btnCerrarSesion.setBounds(454, 384, 160, 35);
+		getContentPane().add(btnCerrarSesion);
 		
 		
 	}
