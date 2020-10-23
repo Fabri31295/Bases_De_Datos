@@ -14,20 +14,17 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-public class VentanaPrincipal {
-
-	private JFrame frame;
-	private JList list;
-
-	/**
-	 * Launch the application.
-	 */
+public class VentanaPrincipal extends javax.swing.JFrame{
+	
+	private JButton consultas;
+	
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					VentanaPrincipal window = new VentanaPrincipal();
-					window.frame.setVisible(true);
+					window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -35,28 +32,36 @@ public class VentanaPrincipal {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
+	
 	public VentanaPrincipal() {
-		initialize();
+		super();
+		initGUI();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+	private void initGUI() {
 		
-		JButton consultas = new JButton("Consultas");
+		try 
+	      {
+	         javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
+	      } 
+	      catch(Exception e) 
+	      {
+	         e.printStackTrace();
+	      }
+		
+		try {
+		this.setBounds(100, 100, 450, 300);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle("PARQUIMETROS");
+		
+		consultas = new JButton("Consultas");
 		consultas.setSize(new Dimension(75, 50));
 		consultas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
@@ -71,8 +76,13 @@ public class VentanaPrincipal {
 					.addComponent(consultas)
 					.addGap(47))
 		);
-		frame.getContentPane().setLayout(groupLayout);
-	
+		getContentPane().setLayout(groupLayout);
+		
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	
 	}
 	

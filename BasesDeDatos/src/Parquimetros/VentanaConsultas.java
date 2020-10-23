@@ -1,39 +1,67 @@
 package Parquimetros;
 
-import java.awt.Component;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import javax.swing.JTextField;
-import javax.swing.*;
-import javax.swing.JButton;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
+import java.awt.Scrollbar;
+import java.awt.ScrollPane;
 import javax.swing.JList;
-import java.sql.*;
+import javax.swing.JOptionPane;
 import java.awt.Dimension;
-import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
-public class VentanaConsultas {
+import com.mysql.cj.jdbc.result.ResultSetMetaData;
 
-	private JFrame frame;
-	private JList listaTablas;
-	private JList listaAtributos;
-	private JTextArea textConsulta;
-	
-	
+import java.awt.Rectangle;
+import javax.swing.JTable;
+import javax.swing.JSeparator;
+
+public class VentanaConsultas extends javax.swing.JFrame{
+
 	protected Connection conexionBD = null;
 	
-	/**
-	 * Launch the application.
-	 */
+	private JTextArea textConsulta;
+	private JButton btnConsultar;
+	private JButton btnLimpiar;
+	private ScrollPane scrollPaneTablas;
+	private ScrollPane scrollPaneAtributos;
+	private JList listaTablas;
+	private JList listaAtributos;
+	private JLabel labelTablas;
+	private JLabel labelAtributos;
+	private ScrollPane scrollPaneConsulta;
+	private JTable tablaConsulta;
+	private JSeparator separatorHorizontal;
+	private JSeparator separatorVertical;
+	
+	private DefaultListModel modelTablas;
+	private DefaultListModel modelAtributos;
+	private DefaultTableModel modelConsulta;
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					VentanaConsultas window = new VentanaConsultas();
-					window.frame.setVisible(true);
+					window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -45,85 +73,199 @@ public class VentanaConsultas {
 	 * Create the application.
 	 */
 	public VentanaConsultas() {
+		super();
 		initialize();
 	}
 
 	/**
 	 * Initialize the contents of the frame.
-	 * @throws SQLException 
 	 */
-	private void initialize(){
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+	private void initialize() {
+		this.setBounds(100, 100, 640, 480);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setLayout(null);
+		this.setTitle("Consultas");
+		this.setResizable(true);
 		
-		JButton btnConsultar = new JButton("Consultar");
+		textConsulta = new JTextArea();
+		textConsulta.setBounds(10, 11, 388, 74);
+		getContentPane().add(textConsulta);
+		
+		btnConsultar = new JButton("Consultar");
 		btnConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				obtenerTabla();
 			}
 		});
-		btnConsultar.setBounds(313, 11, 89, 23);
-		frame.getContentPane().add(btnConsultar);
+		btnConsultar.setBounds(454, 12, 160, 23);
+		getContentPane().add(btnConsultar);
 		
-		JButton btnLimpiar = new JButton("Limpiar");
+		btnLimpiar = new JButton("Limpiar");
 		btnLimpiar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				limpiarTextArea();
+				limpiarTabla();
 			}
 		});
-		btnLimpiar.setBounds(313, 63, 89, 23);
-		frame.getContentPane().add(btnLimpiar);
+		btnLimpiar.setBounds(454, 62, 160, 23);
+		getContentPane().add(btnLimpiar);
 		
-		textConsulta = new JTextArea();
-		textConsulta.setBounds(10, 10, 293, 76);
-		frame.getContentPane().add(textConsulta);
+		scrollPaneTablas = new ScrollPane();
+		scrollPaneTablas.setBounds(new Rectangle(0, 0, 200, 200));
+		scrollPaneTablas.setBounds(454, 145, 160, 130);
+		getContentPane().add(scrollPaneTablas);
 		
-	
-		listaTablas = new JList();
-		listaTablas.setBackground(Color.WHITE);
-		listaTablas.setSize(new Dimension(50, 50));
-		listaTablas.setValueIsAdjusting(true);
-		listaTablas.setBounds(313, 160, 89, -50);
-		frame.getContentPane().add(listaTablas);
-		listarTablas();
-	
+		scrollPaneAtributos = new ScrollPane();
+		scrollPaneAtributos.setBounds(new Rectangle(0, 0, 200, 200));
+		scrollPaneAtributos.setBounds(454, 301, 160, 130);
+		getContentPane().add(scrollPaneAtributos);
+		
+		labelTablas = new JLabel("Tablas");
+		labelTablas.setHorizontalAlignment(SwingConstants.CENTER);
+		labelTablas.setBounds(454, 125, 160, 14);
+		getContentPane().add(labelTablas);
+		
+		labelAtributos = new JLabel("Atributos");
+		labelAtributos.setHorizontalAlignment(SwingConstants.CENTER);
+		labelAtributos.setBounds(454, 281, 160, 14);
+		getContentPane().add(labelAtributos);
+		
 		listaAtributos = new JList();
-		listaTablas.setValueIsAdjusting(true);
-		listaAtributos.setBounds(313, 242, 89, -50);
-		frame.getContentPane().add(listaAtributos);
-		DefaultListModel atr = new DefaultListModel();
-	}
-		/*	listarAtributos(atr);
-		listaTablas.setModel(atr);
-	}*/
+		scrollPaneAtributos.add(listaAtributos);
+		listaAtributos.setBounds(454, 301, 160, 130);
 		
+		listaTablas = new JList();
+		scrollPaneTablas.add(listaTablas);
+		listaTablas.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				obtenerAtributosTabla();
+			}
+		});
+		listaTablas.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		listaTablas.setBounds(454, 145, 160, 130);
+		
+		scrollPaneConsulta = new ScrollPane();
+		scrollPaneConsulta.setBounds(10, 125, 388, 306);
+		getContentPane().add(scrollPaneConsulta);
+		
+		tablaConsulta = new JTable();
+		tablaConsulta.setBounds(10, 125, 388, 305);
+		scrollPaneConsulta.add(tablaConsulta);
+		
+		separatorHorizontal = new JSeparator();
+		separatorHorizontal.setBounds(10, 107, 388, 2);
+		getContentPane().add(separatorHorizontal);
+		
+		separatorVertical = new JSeparator();
+		separatorVertical.setOrientation(SwingConstants.VERTICAL);
+		separatorVertical.setBounds(426, 24, 19, 407);
+		getContentPane().add(separatorVertical);
+		
+		
+	}
+	
 	private void limpiarTextArea() {
 		textConsulta.setText("");
 	}
 	
-	 /*private void conectarBD()
+	private void limpiarTabla() {
+		modelConsulta.setColumnCount(0);
+		modelConsulta.setRowCount(0);
+	}
+	
+
+	public void llenarListaTablas() {
+		try {
+			conectarBD();
+			modelTablas = new DefaultListModel();
+			if(conexionBD == null)
+				System.out.println("Null");
+			DatabaseMetaData metaDatos = conexionBD.getMetaData();
+			ResultSet rs = metaDatos.getTables("parquimetros", null, "%", null);
+			while(rs.next()) {
+				modelTablas.addElement(rs.getString(3));
+			}
+			listaTablas.setModel(modelTablas);
+			this.setVisible(true);
+			desconectarBD();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void obtenerAtributosTabla() {
+		try {
+			conectarBD();
+			modelAtributos = new DefaultListModel();
+			if(conexionBD == null)
+				System.out.println("Null");
+			String tablaSeleccionada = (String) listaTablas.getSelectedValue();
+			DatabaseMetaData metaDatos = conexionBD.getMetaData();
+			ResultSet rs = metaDatos.getColumns(null, null, tablaSeleccionada, null);
+			while(rs.next()) {
+				modelAtributos.addElement(rs.getString(4));
+			}
+			listaAtributos.setModel(modelAtributos);
+			desconectarBD();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+
+	private void obtenerTabla() {
+		try {
+			conectarBD();
+			modelConsulta = new DefaultTableModel();
+			String sql = textConsulta.getText();
+			Statement stmt = this.conexionBD.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			
+			for(int i=1; i<=columnCount; i++) {
+				modelConsulta.addColumn(rsmd.getColumnClassName(i));
+			}
+		
+
+			while(rs.next()) {
+				Object[] filas = new Object[columnCount];
+				for(int i=0;i<columnCount;i++) {
+					filas[i]= rs.getObject(i+1);
+				}
+				modelConsulta.addRow(filas);	
+			}
+			
+			tablaConsulta.setModel(modelConsulta);
+			desconectarBD();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	private void conectarBD()
 	   {
-	      if (this.conexionBD == null)
+	      if (conexionBD == null)
 	      {             
 	         try
-	         {  //se genera el string que define los datos de la conexión 
+	         {  
 	            String servidor = "localhost:3306";
-	            String baseDatos = "datos";
-	            String usuario = "admi";
+	            String baseDatos = "parquimetros";
+	            String usuario = "admin";
 	            String clave = "admin";
 	            String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos + 
 	            		          "?serverTimezone=America/Argentina/Buenos_Aires";
-	            //se intenta establecer la conexión
-	            this.conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
+	            conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
 	         }
 	         catch (SQLException ex)
 	         {
-	        	 /*JOptionPane.showMessageDialog(this,
-	                        "Se produjo un error al intentar conectarse a la base de datos.\n" + 
-	                         ex.getMessage(),
-	                         "Error",
-	                         JOptionPane.ERROR_MESSAGE);
+	        	 JOptionPane.showMessageDialog(null, ex.getMessage());
 	            System.out.println("SQLException: " + ex.getMessage());
 	            System.out.println("SQLState: " + ex.getSQLState());
 	            System.out.println("VendorError: " + ex.getErrorCode());
@@ -147,36 +289,5 @@ public class VentanaConsultas {
 	            System.out.println("VendorError: " + ex.getErrorCode());
 	         }
 	      }
-	   }*/
-	
-	private void listarTablas() {
-	/*	 try {
-			DatabaseMetaData metaDatos = conexionBD.getMetaData();
-			ResultSet tables = metaDatos.getTables(conexionBD.getCatalog(), null, "TAB_%", null);
-			while (tables.next()) {
-			     System.out.println(tables.getString(3));
-			}
-			listaTablas.setModel(tab);
-			System.out.print(listaTablas);
-			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} */
-		
-	}
-		
-		
-
-	
-	/*private void listarAtributos (DefaultListModel atr) {
-		
-	}
-*/
-	public void setVisible(boolean b) {
-		frame.setVisible(b);
-	}
-	
-	
+	   }
 }
