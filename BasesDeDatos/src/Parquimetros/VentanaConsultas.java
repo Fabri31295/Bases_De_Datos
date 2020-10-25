@@ -72,7 +72,7 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		getContentPane().setLayout(null);
 		this.setLocationRelativeTo(null);
 		this.setTitle("Consultas");
-		this.setResizable(true);
+		this.setResizable(false);
 		
 		textConsulta = new JTextArea();
 		textConsulta.setBounds(10, 11, 388, 74);
@@ -220,6 +220,7 @@ public class VentanaConsultas extends javax.swing.JFrame{
 			String tablaSeleccionada = (String) listaTablas.getSelectedValue();
 			DatabaseMetaData metaDatos = conexionBD.getMetaData();
 			ResultSet rs = metaDatos.getColumns(null, null, tablaSeleccionada, null);
+			modelAtributos.removeAllElements();
 			
 			while(rs.next()) {
 				modelAtributos.addElement(rs.getString(4));

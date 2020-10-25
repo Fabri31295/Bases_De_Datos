@@ -12,19 +12,19 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 
-public class VentanaValidacion extends javax.swing.JFrame{
+public class ValidacionInspector extends javax.swing.JFrame{
 
 	protected Connection conexionBD = null;
 
-	private JLabel labelUsuario;
+	private JLabel labelLegajo;
 	private JLabel labelPassword;
-	private JTextField textUsuario;
+	private JTextField textLegajo;
 	private JPasswordField textPassword;
 
 	private JButton btnAceptar;
 
 
-	public VentanaValidacion() {
+	public ValidacionInspector() {
 		super();
 		initialize();
 	}
@@ -36,23 +36,23 @@ public class VentanaValidacion extends javax.swing.JFrame{
 
 		this.setBounds(200, 200, 300, 170);
 		getContentPane().setLayout(null);
-		this.setLocationRelativeTo(null);
 		this.setTitle("Autenticacion");
 		this.setResizable(false);
 		this.setVisible(false);
+		this.setLocationRelativeTo(null);
 
-		labelUsuario = new JLabel("Usuario");
-		labelUsuario.setBounds(28, 23, 76, 14);
-		getContentPane().add(labelUsuario);
+		labelLegajo = new JLabel("Legajo");
+		labelLegajo.setBounds(28, 23, 76, 14);
+		getContentPane().add(labelLegajo);
 
-		labelPassword = new JLabel("Contraseña");
+		labelPassword = new JLabel("Password");
 		labelPassword.setBounds(28, 61, 76, 14);
 		getContentPane().add(labelPassword);
 
-		textUsuario = new JTextField();
-		textUsuario.setBounds(166, 20, 86, 20);
-		getContentPane().add(textUsuario);
-		textUsuario.setColumns(10);
+		textLegajo = new JTextField();
+		textLegajo.setBounds(166, 20, 86, 20);
+		getContentPane().add(textLegajo);
+		textLegajo.setColumns(10);
 
 		textPassword = new JPasswordField();
 		textPassword.setBounds(166, 58, 86, 20);
@@ -69,25 +69,24 @@ public class VentanaValidacion extends javax.swing.JFrame{
 	}
 
 	private void aceptar() {
-		String userIngresado = textUsuario.getText();
+		String userIngresado = textLegajo.getText();
 		String passwordIngresado = new String(textPassword.getPassword());
 
 		conectarBD(userIngresado,passwordIngresado);
 
 		if(conexionBD != null) {
-			setVisible(false);
-			VentanaConsultas vc = new VentanaConsultas (conexionBD);
-			vc.llenarListaTablas();
+			//setVisible(false);
+			//VentanaInspector vc = new VentanaInspector(conexionBD);
 		}
 
-		textUsuario.setText("");
+		textLegajo.setText("");
 		textPassword.setText("");
 
 	}
 
 	private boolean conectarBD(String user, String password)
-	   {
-	      if (conexionBD == null)
+	   { return true;
+	    /*  if (conexionBD == null)
 	      {
 	         try
 	         {
@@ -104,9 +103,9 @@ public class VentanaValidacion extends javax.swing.JFrame{
 	         }
 	         catch (SQLException ex)
 	         {
-	        	 JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
+	        	 JOptionPane.showMessageDialog(null, "Numero de legajo y/o contraseÃ±a incorrecto", "ERROR", 0);
 	         }
 	      }
-	     return false;
+	     return false;*/
 	   }
 }

@@ -30,12 +30,12 @@ public class VentanaPrincipal extends javax.swing.JFrame{
 	/**
 	 * Create the application.
 	 */
-	
-	
+
+
 	public VentanaPrincipal() {
 		initialize();
 	}
-	
+
 
 	/**
 	 * Initialize the contents of the frame.
@@ -45,22 +45,37 @@ public class VentanaPrincipal extends javax.swing.JFrame{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
-		
+		this.setTitle("PARQUIMETROS");
+		this.setResizable(false);
+
 		JButton btnConsultar = new JButton("Consultar");
 		btnConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				consultar();
 			}
 		});
-		btnConsultar.setBounds(100, 339, 100, 47);
+		btnConsultar.setBounds(130, 339, 100, 47);
 		getContentPane().add(btnConsultar);
-		this.setTitle("PARQUIMETROS");
-		this.setResizable(true);
+
+
+		JButton btnInspector = new JButton("Inspector");
+		btnInspector.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				inspector();
+			}
+		});
+		btnInspector.setBounds(400, 339, 100, 47);
+		getContentPane().add(btnInspector);
 	}
-	
+
 	private void consultar() {
 		VentanaValidacion v = new VentanaValidacion();
 		v.setVisible(true);
 	}
-	
+
+	private void inspector(){
+		ValidacionInspector i = new ValidacionInspector();
+		i.setVisible(true);
+	}
+
 }
