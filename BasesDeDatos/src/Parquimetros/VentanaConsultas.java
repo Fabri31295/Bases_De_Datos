@@ -70,6 +70,7 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		
 		this.setBounds(100, 100, 640, 480);
 		getContentPane().setLayout(null);
+		this.setLocationRelativeTo(null);
 		this.setTitle("Consultas");
 		this.setResizable(true);
 		

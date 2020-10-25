@@ -43,6 +43,7 @@ public class VentanaPrincipal extends javax.swing.JFrame{
 	private void initialize() {
 		this.setBounds(100, 100, 640, 480);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 		
 		JButton btnConsultar = new JButton("Consultar");

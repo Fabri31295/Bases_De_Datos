@@ -40,6 +40,7 @@ public class VentanaValidacion extends javax.swing.JFrame{
 		this.setTitle("Autenticación");
 		this.setResizable(true);
 		this.setVisible(false);
+		this.setLocationRelativeTo(null);
 		
 		labelUsuario = new JLabel("Usuario");
 		labelUsuario.setBounds(28, 23, 76, 14);
