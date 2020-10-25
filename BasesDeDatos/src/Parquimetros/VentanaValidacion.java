@@ -1,57 +1,31 @@
 package Parquimetros;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.awt.event.ActionEvent;
-import java.awt.Rectangle;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 
 public class VentanaValidacion extends javax.swing.JFrame{
 	
 	protected Connection conexionBD = null;
 	
-	private static VentanaValidacion instancia;
-
-	
 	private JLabel labelUsuario;
 	private JLabel labelContraseña;
 	private JTextField textUsuario;
 	private JPasswordField textContraseña;
 
-
 	private JButton btnAceptar;
 
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaValidacion window = new VentanaValidacion();
-					window.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public static VentanaValidacion getInstancia() {
-		if(instancia==null) {
-			instancia = new VentanaValidacion();
-		}
-		return instancia;
-	}
-	private VentanaValidacion() {
+	public VentanaValidacion() {
 		super();
 		initialize();
 	}
@@ -61,28 +35,27 @@ public class VentanaValidacion extends javax.swing.JFrame{
 	 */
 	private void initialize() {
 		
-		this.setBounds(100, 100, 450, 300);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setBounds(200, 200, 300, 170);
 		getContentPane().setLayout(null);
 		this.setTitle("Autenticación");
 		this.setResizable(true);
 		this.setVisible(false);
 		
 		labelUsuario = new JLabel("Usuario");
-		labelUsuario.setBounds(85, 59, 76, 14);
+		labelUsuario.setBounds(28, 23, 76, 14);
 		getContentPane().add(labelUsuario);
 		
 		labelContraseña = new JLabel("Contrase\u00F1a");
-		labelContraseña.setBounds(85, 118, 76, 14);
+		labelContraseña.setBounds(28, 61, 76, 14);
 		getContentPane().add(labelContraseña);
 		
 		textUsuario = new JTextField();
-		textUsuario.setBounds(235, 56, 86, 20);
+		textUsuario.setBounds(166, 20, 86, 20);
 		getContentPane().add(textUsuario);
 		textUsuario.setColumns(10);
 		
 		textContraseña = new JPasswordField();
-		textContraseña.setBounds(235, 115, 86, 20);
+		textContraseña.setBounds(166, 58, 86, 20);
 		getContentPane().add(textContraseña);
 		
 		btnAceptar = new JButton("Aceptar");
@@ -91,7 +64,7 @@ public class VentanaValidacion extends javax.swing.JFrame{
 				aceptar();
 			}
 		});
-		btnAceptar.setBounds(156, 184, 86, 20);
+		btnAceptar.setBounds(95, 100, 86, 20);
 		getContentPane().add(btnAceptar);
 	}
 	
@@ -103,13 +76,12 @@ public class VentanaValidacion extends javax.swing.JFrame{
 		
 		if(conexionBD != null) {
 			setVisible(false);
-			VentanaPrincipal p = VentanaPrincipal.getInstancia();
-			p.setVisible(false);
-			VentanaConsultas c = VentanaConsultas.getInstancia();
-			c.llenarListaTablas();
-			desconectarBD();
-			
+			VentanaConsultas vc = new VentanaConsultas (conexionBD);
+			vc.llenarListaTablas();
+			VentanaPrincipal vp = new VentanaPrincipal();
+			vp.setVisible(false);
 		}
+		
 		textUsuario.setText("");
 		textContraseña.setText("");
 		
@@ -134,27 +106,9 @@ public class VentanaValidacion extends javax.swing.JFrame{
 	         }
 	         catch (SQLException ex)
 	         {
-	        	 JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos");
+	        	 JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
 	         }
 	      }
 	     return false;
-	   }
-
-	   private void desconectarBD()
-	   {
-	      if (this.conexionBD != null)
-	      {
-	         try
-	         {
-	            this.conexionBD.close();
-	            this.conexionBD = null;
-	         }
-	         catch (SQLException ex)
-	         {
-	            System.out.println("SQLException: " + ex.getMessage());
-	            System.out.println("SQLState: " + ex.getSQLState());
-	            System.out.println("VendorError: " + ex.getErrorCode());
-	         }
-	      }
 	   }
 }

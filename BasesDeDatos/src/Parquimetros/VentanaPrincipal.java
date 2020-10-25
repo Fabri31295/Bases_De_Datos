@@ -6,10 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Canvas;
 
 public class VentanaPrincipal extends javax.swing.JFrame{
 
-	private static VentanaPrincipal instancia;
 
 	/**
 	 * Launch the application.
@@ -31,14 +31,8 @@ public class VentanaPrincipal extends javax.swing.JFrame{
 	 * Create the application.
 	 */
 	
-	public static VentanaPrincipal getInstancia() {
-		if(instancia==null) {
-			instancia = new VentanaPrincipal();
-		}
-		return instancia;
-	}
 	
-	private VentanaPrincipal() {
+	public VentanaPrincipal() {
 		initialize();
 	}
 	
@@ -57,16 +51,15 @@ public class VentanaPrincipal extends javax.swing.JFrame{
 				consultar();
 			}
 		});
-		btnConsultar.setBounds(250, 247, 100, 47);
+		btnConsultar.setBounds(100, 339, 100, 47);
 		getContentPane().add(btnConsultar);
 		this.setTitle("PARQUIMETROS");
 		this.setResizable(true);
 	}
 	
 	private void consultar() {
-		VentanaValidacion v = VentanaValidacion.getInstancia();
+		VentanaValidacion v = new VentanaValidacion();
 		v.setVisible(true);
-		setVisible(false);
 	}
-
+	
 }

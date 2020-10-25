@@ -37,8 +37,6 @@ import javax.swing.JSeparator;
 public class VentanaConsultas extends javax.swing.JFrame{
 
 	protected Connection conexionBD = null;
-
-	private static VentanaConsultas instancia;
 	
 	private JTextArea textConsulta;
 	private JButton btnConsultar;
@@ -58,28 +56,10 @@ public class VentanaConsultas extends javax.swing.JFrame{
 	private DefaultListModel modelAtributos;
 	private DefaultTableModel modelConsulta;
 	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VentanaConsultas window = new VentanaConsultas();
-					window.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
-	public static VentanaConsultas getInstancia() {
-		if(instancia==null) {
-			instancia = new VentanaConsultas();
-		}
-		return instancia;
-	}
-	
-	private VentanaConsultas() {
+	public VentanaConsultas(Connection c) {
 		super();
+		conexionBD = c;
 		initialize();
 	}
 
@@ -87,8 +67,8 @@ public class VentanaConsultas extends javax.swing.JFrame{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
 		this.setBounds(100, 100, 640, 480);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		this.setTitle("Consultas");
 		this.setResizable(true);
@@ -156,7 +136,6 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		listaTablas = new JList();
 		scrollPaneTablas.add(listaTablas);
 		listaTablas.addMouseListener(new MouseAdapter() {
-			@Override
 			public void mouseClicked(MouseEvent e) {
 				obtenerAtributosTabla();
 			}
@@ -171,15 +150,26 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		JButton btnCerrarSesion = new JButton("Cerrar Sesion");
 		btnCerrarSesion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				VentanaPrincipal v = VentanaPrincipal.getInstancia();
-				v.setVisible(true);
+				VentanaPrincipal vp = new VentanaPrincipal();
+				vp.setVisible(true);
 				setVisible(false);
+				limpiarVentanaConsultas();
 				desconectarBD();
 			}
 		});
 		btnCerrarSesion.setBounds(454, 384, 160, 35);
 		getContentPane().add(btnCerrarSesion);
 		
+
+		modelTablas = new DefaultListModel();	
+		modelAtributos = new DefaultListModel();
+		modelConsulta = new DefaultTableModel();
+	}
+	
+	private void limpiarVentanaConsultas() {
+		limpiarTextArea();
+		limpiarTabla();
+		limpiarAtributos();
 		
 	}
 	
@@ -192,21 +182,27 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		modelConsulta.setRowCount(0);
 	}
 	
+	private void limpiarAtributos() {
+		modelAtributos.removeAllElements();
+	}
+	
 
 	public void llenarListaTablas() {
 		try {
-			conectarBD();
-			modelTablas = new DefaultListModel();
+			
 			if(conexionBD == null)
 				System.out.println("Null");
+			
 			DatabaseMetaData metaDatos = conexionBD.getMetaData();
 			ResultSet rs = metaDatos.getTables("parquimetros", null, "%", null);
+			
 			while(rs.next()) {
 				modelTablas.addElement(rs.getString(3));
 			}
+			
 			listaTablas.setModel(modelTablas);
 			this.setVisible(true);
-			desconectarBD();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -215,18 +211,20 @@ public class VentanaConsultas extends javax.swing.JFrame{
 	
 	private void obtenerAtributosTabla() {
 		try {
-			conectarBD();
-			modelAtributos = new DefaultListModel();
+		
+			
 			if(conexionBD == null)
 				System.out.println("Null");
+			
 			String tablaSeleccionada = (String) listaTablas.getSelectedValue();
 			DatabaseMetaData metaDatos = conexionBD.getMetaData();
 			ResultSet rs = metaDatos.getColumns(null, null, tablaSeleccionada, null);
+			
 			while(rs.next()) {
 				modelAtributos.addElement(rs.getString(4));
 			}
+			
 			listaAtributos.setModel(modelAtributos);
-			desconectarBD();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,19 +235,20 @@ public class VentanaConsultas extends javax.swing.JFrame{
 
 	private void obtenerTabla() {
 		try {
-			conectarBD();
-			modelConsulta = new DefaultTableModel();
+			
 			String sql = textConsulta.getText();
 			Statement stmt = this.conexionBD.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
+			
+			
 			ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
+			
 			int columnCount = rsmd.getColumnCount();
 			
 			for(int i=1; i<=columnCount; i++) {
 				modelConsulta.addColumn(rsmd.getColumnClassName(i));
 			}
 		
-
 			while(rs.next()) {
 				Object[] filas = new Object[columnCount];
 				for(int i=0;i<columnCount;i++) {
@@ -259,10 +258,12 @@ public class VentanaConsultas extends javax.swing.JFrame{
 			}
 			
 			tablaConsulta.setModel(modelConsulta);
-			desconectarBD();
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Consulta incorrecta", "ERROR", 0);
+			limpiarTextArea();
 		}
 	}
 	
