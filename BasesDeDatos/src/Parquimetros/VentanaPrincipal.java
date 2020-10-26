@@ -69,12 +69,12 @@ public class VentanaPrincipal extends javax.swing.JFrame{
 	}
 
 	private void consultar() {
-		VentanaValidacion v = new VentanaValidacion();
+		VentanaValidacion v = new VentanaValidacion("Admin");
 		v.setVisible(true);
 	}
 
 	private void inspector(){
-		ValidacionInspector i = new ValidacionInspector();
+		VentanaValidacion i = new VentanaValidacion("Inspector");
 		i.setVisible(true);
 	}
 
