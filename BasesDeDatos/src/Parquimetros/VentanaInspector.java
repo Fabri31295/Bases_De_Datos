@@ -200,6 +200,8 @@ public class VentanaInspector extends javax.swing.JFrame{
 			public void actionPerformed(ActionEvent e) {
 				desconectarBD();
 				setVisible(false);
+				VentanaPrincipal p = VentanaPrincipal.getInstancia();
+				p.setVisible(true);
 			}
 		});
 		

@@ -61,6 +61,7 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		super();
 		conexionBD = c;
 		initialize();
+		llenarListaTablas();
 	}
 
 	/**
@@ -151,11 +152,11 @@ public class VentanaConsultas extends javax.swing.JFrame{
 		JButton btnCerrarSesion = new JButton("Cerrar Sesion");
 		btnCerrarSesion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				VentanaPrincipal vp = new VentanaPrincipal();
-				vp.setVisible(true);
+				desconectarBD();
 				setVisible(false);
 				limpiarVentanaConsultas();
-				desconectarBD();
+				VentanaPrincipal p = VentanaPrincipal.getInstancia();
+				p.setVisible(true);
 			}
 		});
 		btnCerrarSesion.setBounds(454, 384, 160, 35);
