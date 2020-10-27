@@ -95,42 +95,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		textPassword.setBounds(185, 75, 86, 20);
 		getContentPane().add(textPassword);
 	}
-
-/*	private void acceder() {
-
-		try {
-			String userIngresado = textUsuario.getText();
-			String passwordIngresado = new String(textPassword.getPassword());
-
-			conectarBD(userIngresado, passwordIngresado);
-
-			if (conexionBD != null) {
-				setVisible(false);
-				VentanaConsultas vc = new VentanaConsultas(conexionBD);
-				vc.setVisible(true);
-			} else {
-				conectarBD("inspector", "inspector");
-				Statement stmt = this.conexionBD.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
-						+ userIngresado + " AND password = md5('" + passwordIngresado + "')");
-
-				if (rs.next()) {
-					setVisible(false);
-					VentanaInspector i = new VentanaInspector(conexionBD, userIngresado);
-					i.setVisible(true);
-				} else {				
-					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
-					desconectarBD();
-				}
-
-			}
-		} catch (SQLException ex) {
-
-		}
-		textUsuario.setText("");
-		textPassword.setText("");
-
-	}*/
 	
 	private void acceder() {
 		
