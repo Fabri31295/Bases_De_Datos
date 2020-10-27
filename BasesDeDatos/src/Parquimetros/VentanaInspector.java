@@ -1,6 +1,7 @@
 // Almaraz Fabricio, Pacione Luciano
 package Parquimetros;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
 public class VentanaInspector extends javax.swing.JFrame{
@@ -26,21 +30,24 @@ public class VentanaInspector extends javax.swing.JFrame{
 	
 	protected Connection conexionBD = null;
 	private ArrayList<String> patentes;
+	private ArrayList<ArrayList<String>> erroneas;
 	private ArrayList<ArrayList<String>> multados;
 	private JScrollPane scroll_patentes;
 	private JScrollPane scroll_parquimetros;
 	private JScrollPane scroll_multas;
+	private JScrollPane scroll_errores;
 	private DefaultListModel model_parquimetros;
 	private DefaultListModel model_patentes;
+	private DefaultListModel model_errores;
 	private DefaultTableModel model_tabla;
-	private JList lista_patentes,lista_parquimetros;
+	private JList lista_patentes,lista_parquimetros,lista_errores;
 	private JTable table;
-	private JTextPane informacion;
+	private JTextPane informacion,info_errores;
 	private JButton set_patente,remove_patente;
 	private JButton confirmar,cerrar_sesion;
 	private JTextField ingreso_patente;
-	private JLabel texto_patente,texto_parquimetros;
-	private JLabel texto_multas;
+	private JLabel txt_patente,txt_parquimetros;
+	private JLabel txt_multas,txt_info;
 	private Fecha date;
 	private String legajo;		
 	
@@ -76,7 +83,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 	private void inicializarPaneles() {
 		
 		scroll_parquimetros = new JScrollPane();
-		scroll_parquimetros.setBounds(new Rectangle(0, 0, 200, 200));
 		scroll_parquimetros.setBounds(457, 250, 160, 72);
 		getContentPane().add(scroll_parquimetros);
 		
@@ -85,31 +91,43 @@ public class VentanaInspector extends javax.swing.JFrame{
 		getContentPane().add(scroll_patentes);
 		
 		scroll_multas = new JScrollPane();
-		scroll_multas.setBounds(14, 40, 432, 280);
+		scroll_multas.setBounds(14, 36, 432, 280);
 		getContentPane().add(scroll_multas);
 		
+		scroll_errores = new JScrollPane();
+		scroll_errores.setBounds(14,338, 102, 90);
+		getContentPane().add(scroll_errores);
+
+		Border border = BorderFactory.createLineBorder(Color.GRAY, 1);
 		informacion = new JTextPane();
-		informacion.setBounds(14,330, 432, 90);
+		informacion.setBounds(124,338, 320, 90);
+		informacion.setBorder(border);
+		informacion.setEditable(false);
 		getContentPane().add(informacion);
 		
 		ingreso_patente = new JTextField();
 		ingreso_patente.setBounds(462, 35, 150, 30);
 		getContentPane().add(ingreso_patente);
 		
-		texto_patente = new JLabel();
-		texto_patente.setBounds(488, 5, 150, 30);
-		texto_patente.setText("Ingresar patente");
-		getContentPane().add(texto_patente);
+		txt_patente = new JLabel();
+		txt_patente.setBounds(488, 5, 150, 30);
+		txt_patente.setText("Ingresar patente");
+		getContentPane().add(txt_patente);
 		
-		texto_parquimetros = new JLabel();
-		texto_parquimetros.setBounds(500, 225, 80, 30);
-		texto_parquimetros.setText("Parquimetros");
-		getContentPane().add(texto_parquimetros);
+		txt_parquimetros = new JLabel();
+		txt_parquimetros.setBounds(500, 225, 80, 30);
+		txt_parquimetros.setText("Parquimetros");
+		getContentPane().add(txt_parquimetros);
 		
-		texto_multas = new JLabel();
-		texto_multas.setBounds(207,14,80,30);
-		texto_multas.setText("MULTAS");
-		getContentPane().add(texto_multas);
+		txt_multas = new JLabel();
+		txt_multas.setBounds(207,14,80,30);
+		txt_multas.setText("MULTAS");
+		getContentPane().add(txt_multas);
+		
+		txt_info = new JLabel();
+		txt_info.setBounds(250,316,80,30);
+		txt_info.setText("Información");
+		getContentPane().add(txt_info);
 		
 		lista_patentes = new JList<String>();
 		scroll_patentes.setViewportView(lista_patentes);
@@ -117,8 +135,8 @@ public class VentanaInspector extends javax.swing.JFrame{
 		lista_parquimetros = new JList<Object>();
 		scroll_parquimetros.setViewportView(lista_parquimetros);
 		
-		lista_parquimetros = new JList<Object>();
-		scroll_parquimetros.setViewportView(lista_parquimetros);
+		lista_errores = new JList<Object>();
+		scroll_errores.setViewportView(lista_errores);
 		
 		model_tabla = new DefaultTableModel() {
 		      public boolean isCellEditable(int rowIndex, int mColIndex) {
@@ -127,6 +145,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		 };
 		model_patentes = new DefaultListModel<String>();
 		model_parquimetros = new DefaultListModel<Object>();
+		model_errores = new DefaultListModel<String>();
 		 
 		table = new JTable(model_tabla);
 		table.setFont(new Font("Montserrat", Font.BOLD, 10));
@@ -241,8 +260,8 @@ public class VentanaInspector extends javax.swing.JFrame{
 		try {			
 			
 			informacion.setText("Registrando el acceso del inspector al parquímetro...");
-			String texto = (String) lista_parquimetros.getSelectedValue();
-			String[] parts = texto.split(" ");
+			String txt = (String) lista_parquimetros.getSelectedValue();
+			String[] parts = txt.split(" ");
 			String id_asociado = asociado(parts[0],parts[1]);
 			
 			if(id_asociado != null) {
@@ -250,6 +269,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 				if(!model_patentes.isEmpty()) {
 					informacion.setText(informacion.getText()+"\n\nGenerando las multas correspondientes...");
 					multados = new ArrayList<ArrayList<String>>();
+					erroneas = new ArrayList<ArrayList<String>>();
 					cargarMultas(parts[0],parts[1],id_asociado);
 					mostrarMultas();
 				}
@@ -323,37 +343,45 @@ public class VentanaInspector extends javax.swing.JFrame{
 			res.close();
 			
 			// Para las patentes que no tienen estacionamientos abiertos se les hace una multa
-			if(patentes.size() > 0) {
+				if(patentes.size() > 0) {
 				
-				// Busco el ultimo numero de multa 
-				ResultSet res_m = stat.executeQuery("SELECT numero FROM multa ORDER BY numero DESC LIMIT 1");
-				res_m.next();
-				int n_multa = Integer.parseInt(res_m.getString("numero")) + 1;
-				res_m.close();
-				
-				// Genero un arreglo para cada multa y almaceno los datos correspondientes a la misma
-				for(int i = 0; i < patentes.size(); i++) {
-					ArrayList<String> pm = new ArrayList<String>();
+					// Busco el ultimo numero de multa 
+					ResultSet res_m = stat.executeQuery("SELECT numero FROM multa ORDER BY numero DESC LIMIT 1");
+					res_m.next();
+					int n_multa = Integer.parseInt(res_m.getString("numero")) + 1;
+					res_m.close();
+					// Genero un arreglo para cada multa y almaceno los datos correspondientes a la misma
 					
-					pm.add(String.valueOf(n_multa++));
-					pm.add(date.getDateSQL().toString());
-					pm.add(date.getTimeSQL().toString());
-					pm.add(calle);
-					pm.add(altura);
-					pm.add(patentes.get(i));
-					pm.add(legajo);
-					
-					multados.add(pm);
+					for(int i = 0; i < patentes.size(); i++) {
+						ArrayList<String> pm = new ArrayList<String>();
+						
+						try {
+							stat.execute("INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES("+n_multa+", '"+date.getDateSQL()+"', '"+date.getTimeSQL()+"', '"+patentes.get(i)+"', "+Integer.valueOf(id_asociado)+");");
+						
+							pm = new ArrayList<String>();
+							pm.add(String.valueOf(n_multa++));
+							pm.add(date.getDateSQL().toString());
+							pm.add(date.getTimeSQL().toString());
+							pm.add(calle);
+							pm.add(altura);
+							pm.add(patentes.get(i));
+							pm.add(legajo);
+						
+							multados.add(pm);
+						
+						}catch(java.sql.SQLException ex) {
+							erroneas.add(pm);
+						}
+					}
 				}
-			}
 			
-			ResultSet rs_i = stat.executeQuery("SELECT id_parq FROM parquimetros WHERE calle = '" + calle + "' AND altura = " + altura);
+			ResultSet rs_i = stat.executeQuery("SELECT id_parq FROM parquimetros WHERE calle = '"+calle+"' AND altura = "+altura);
 			String id_parq = null;
 			if(rs_i.next())
 				id_parq = rs_i.getString("id_parq");
 			rs_i.close();
 			
-			stat.execute("INSERT INTO accede(legajo,id_parq,fecha,hora) VALUES (" +legajo+ ", " + id_parq + ", '" + date.getDateSQL() + "', '" + date.getTimeSQL() + "');");
+			stat.execute("INSERT INTO accede(legajo,id_parq,fecha,hora) VALUES("+legajo+", "+id_parq+", '"+date.getDateSQL()+"', '"+date.getTimeSQL()+"');");
 			limpiarPatentes();
 			
 		}catch (SQLException e){
@@ -367,15 +395,20 @@ public class VentanaInspector extends javax.swing.JFrame{
 	 * Muestra por interfaz las multas generadas
 	 */
 	private void mostrarMultas() {
-		model_tabla.addColumn("Nro");
-		model_tabla.addColumn("Fecha");
-		model_tabla.addColumn("Hora");
-		model_tabla.addColumn("Calle");
-		model_tabla.addColumn("Altura");
-		model_tabla.addColumn("Patente");
-		model_tabla.addColumn("Legajo");
-		for(ArrayList<String> multa: multados)
-				model_tabla.addRow(new Object[]{multa.get(0),multa.get(1),multa.get(2),multa.get(3),multa.get(4),multa.get(5),multa.get(6)});
+			model_tabla.addColumn("Nro");
+			model_tabla.addColumn("Fecha");
+			model_tabla.addColumn("Hora");
+			model_tabla.addColumn("Calle");
+			model_tabla.addColumn("Altura");
+			model_tabla.addColumn("Patente");
+			model_tabla.addColumn("Legajo");
+			for(ArrayList<String> multa: multados)
+				model_tabla.addRow(new Object[]{multa.get(0),multa.get(1),multa.get(2),multa.get(3),multa.get(4),multa.get(5),multa.get(6)});	
+
+			for(ArrayList<String> error: erroneas) {
+				model_errores.add(0,error.get(5));
+			}
+			lista_errores.setModel(model_errores);
 	}
 	
 	/*

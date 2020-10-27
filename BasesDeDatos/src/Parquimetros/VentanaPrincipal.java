@@ -75,7 +75,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				acceder();
 			}
 		});
-		btnAcceder.setBounds(98, 106, 100, 47);
+		btnAcceder.setBounds(98, 123, 100, 27);
 		getContentPane().add(btnAcceder);
 
 		JLabel lblAdmin = new JLabel("Usuario");
@@ -97,84 +97,61 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 	}
 
 	private void acceder() {
-		try {
+			
 			String userIngresado = textUsuario.getText();
 			String passwordIngresado = new String(textPassword.getPassword());
 
 			conectarBD(userIngresado, passwordIngresado);
 
-			if (conexionBD != null) {
-				setVisible(false);
-				VentanaConsultas vc = new VentanaConsultas(conexionBD);
-				vc.setVisible(true);
-			} else {
-
-				conectarBD();
-				Statement stmt;
-				stmt = this.conexionBD.createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
-						+ userIngresado + " AND password = md5('" + passwordIngresado + "')");
-
-				if (rs.next()) {
-					desconectarBD();
-					conectarBD("inspector", "inspector");
+			if(conexionBD != null && userIngresado.equals("admin")) { 
 					setVisible(false);
-
-					textUsuario.setText("");
-					textPassword.setText("");
-					
-					VentanaInspector i = new VentanaInspector(conexionBD, userIngresado);
-					i.setVisible(true);
-				} 
-				
+					VentanaConsultas vc = new VentanaConsultas(conexionBD);
+					vc.setVisible(true);
 			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
+			else {
+					try {
+						conectarBD("inspector", "inspector");
+						Statement stmt = this.conexionBD.createStatement();
+						ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "+userIngresado+" AND password = md5('"+passwordIngresado+"')");
+						
+						if(rs.next()) {
+							setVisible(false);
+							VentanaInspector i = new VentanaInspector(conexionBD,userIngresado);
+							i.setVisible(true);
+						}else {
+							JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
+							desconectarBD();
+						}
+						
+					}catch(SQLException ex) {
+						
+					}
+			}
 
 			textUsuario.setText("");
 			textPassword.setText("");
-		}
 
 	}
 
-	private boolean conectarBD(String user, String password) {
+	private void conectarBD(String user, String password) {
 		if (conexionBD == null) {
 			try {
+				
 				String servidor = "localhost:3306";
 				String baseDatos = "parquimetros";
 				String usuario = user;
 				String clave = password;
 				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
 						+ "?serverTimezone=America/Argentina/Buenos_Aires";
-				conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
-
-				return true;
+				
+				conexionBD =  DriverManager.getConnection(uriConexion, usuario, clave);
 
 			} catch (SQLException ex) {
-				//ex.printStackTrace();
-			}
-		}
-		return false;
-	}
 
-	private void conectarBD() {
-		if (conexionBD == null) {
-			try {
-				String servidor = "localhost:3306";
-				String baseDatos = "parquimetros";
-				String usuario = "admin";
-				String clave = "admin";
-				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
-						+ "?serverTimezone=America/Argentina/Buenos_Aires";
-				conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
-			} catch (SQLException ex) {
-				JOptionPane.showMessageDialog(null, ex.getMessage());
-				System.out.println("SQLException: " + ex.getMessage());
-				System.out.println("SQLState: " + ex.getSQLState());
-				System.out.println("VendorError: " + ex.getErrorCode());
 			}
 		}
 	}
+	
 
 	private void desconectarBD() {
 		if (this.conexionBD != null) {
