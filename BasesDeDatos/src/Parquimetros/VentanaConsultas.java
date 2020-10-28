@@ -50,6 +50,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 	private JTextArea textConsulta;
 	private JButton btnConsultar;
 	private JButton btnLimpiar;
+	private JButton btnABM;
 	private ScrollPane scrollPaneTablas;
 	private ScrollPane scrollPaneAtributos;
 	private JList listaTablas;
@@ -93,7 +94,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		btnConsultar = new JButton("Consultar");
 		btnConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				obtenerTabla();
+				examinarConsulta();
 			}
 		});
 		btnConsultar.setBounds(454, 12, 160, 35);
@@ -107,7 +108,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 			}
 		});
 
-		btnLimpiar.setBounds(454, 62, 160, 35);
+		btnLimpiar.setBounds(454, 60, 160, 35);
 		getContentPane().add(btnLimpiar);
 
 		scrollPaneTablas = new ScrollPane();
@@ -165,7 +166,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		});
 		btnCerrarSesion.setBounds(454, 384, 160, 35);
 		getContentPane().add(btnCerrarSesion);
-
+	
 		modelTablas = new DefaultListModel();
 		modelAtributos = new DefaultListModel();
 	}
@@ -191,9 +192,6 @@ public class VentanaConsultas extends javax.swing.JFrame {
 
 	public void llenarListaTablas() {
 		try {
-
-			if (conexionBD == null)
-				System.out.println("Null");
 
 			DatabaseMetaData metaDatos = conexionBD.getMetaData();
 			ResultSet rs = metaDatos.getTables("parquimetros", null, "%", null);
@@ -233,11 +231,32 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		}
 
 	}
-
-	private void obtenerTabla() {
+	
+	private void examinarConsulta() {
+		try {
+			String sql = textConsulta.getText().trim();
+			String[] words = sql.split(" ", 2);
+			String firstWord = words[0];
+			if(firstWord.compareToIgnoreCase("Select")==0)
+				obtenerTabla(sql);
+			else {
+				Statement stmt = this.conexionBD.createStatement();
+				stmt.execute(sql);
+				JOptionPane.showMessageDialog(null, "Comando ejecutado con exito");
+				limpiarTextArea();
+				stmt.close();
+			} 
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "No se pudo actualizar correctamente", "ERROR", 0);
+		}
+	}
+	
+	private void obtenerTabla(String sql) {
 		try {
 
-			String sql = textConsulta.getText();
 			Statement stmt = this.conexionBD.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 
@@ -250,9 +269,8 @@ public class VentanaConsultas extends javax.swing.JFrame {
 					tablaConsultas.getColumn(i).setDateFormat("dd/MM/YYYY");
 				}
 			}
+			stmt.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Consulta incorrecta", "ERROR", 0);
 		}
 	}

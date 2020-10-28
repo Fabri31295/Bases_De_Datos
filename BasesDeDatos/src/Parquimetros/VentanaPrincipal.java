@@ -99,6 +99,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 	private void acceder() {
 		
 		try {
+			
 		String userIngresado = textUsuario.getText();
 		String passwordIngresado = new String(textPassword.getPassword());
 		
@@ -110,10 +111,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 			v.setVisible(true);
 		}
 		else {
-			conectarBD("inspector", "inspector");
-			Statement stmt;
-			
-				stmt = this.conexionBD.createStatement();
+			conectarInspectorBD();
+			Statement stmt = this.conexionBD.createStatement();
 			
 			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
 					+ userIngresado + " AND password = md5('" + passwordIngresado + "')");
@@ -130,13 +129,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		}
 		textUsuario.setText("");
 		textPassword.setText("");
-		
+	
 		} 
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
 
 	private void conectarBD(String user, String password) {
 		if (conexionBD == null) {
@@ -146,6 +146,25 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				String baseDatos = "parquimetros";
 				String usuario = user;
 				String clave = password;
+				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
+						+ "?serverTimezone=America/Argentina/Buenos_Aires";
+
+				conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
+
+			} catch (SQLException ex) {
+
+			}
+		}
+	}
+	
+	private void conectarInspectorBD() {
+		if (conexionBD == null) {
+			try {
+
+				String servidor = "localhost:3306";
+				String baseDatos = "parquimetros";
+				String usuario = "inspector";
+				String clave = "inspector";
 				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
 						+ "?serverTimezone=America/Argentina/Buenos_Aires";
 
