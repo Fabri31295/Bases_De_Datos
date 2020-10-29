@@ -172,7 +172,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 			public void actionPerformed(ActionEvent e) {
 				String ingresada = ingreso_patente.getText();
 				if(ingresada.length() == 6) {
-						if(getPosicion(ingreso_patente.getText()) == 0) {
+						if(getPosicion(ingreso_patente.getText()) == -1) {
 							model_patentes.add(0,ingresada);
 							lista_patentes.setModel(model_patentes);
 							ingreso_patente.setText("");
@@ -189,7 +189,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 		remove_patente.setBounds(540, 70, 42, 18);
 		remove_patente.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
-				
 				if(model_patentes.size() > 0) {
 					String seleccion;
 					if(ingreso_patente.getText().equals("")) 
@@ -197,7 +196,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 					else 
 						seleccion = ingreso_patente.getText();
 					
-					if(getPosicion(seleccion) != 0) 
+					if(getPosicion(seleccion) != -1) 
 						if(model_patentes.size() == 1)
 							model_patentes.removeAllElements();
 						else {
@@ -448,17 +447,17 @@ public class VentanaInspector extends javax.swing.JFrame{
 	
 	/*
 	 *  Retorna la posicion de una patente en la lista ingresada por el usuario.
-	 *  Si no encuentra la patente, retorna 0.
+	 *  Si no encuentra la patente, retorna -1.
 	 */
 	private int getPosicion(String p) {
 		int i = model_patentes.size();
-		int ret = 0,j;
+		int ret = -1,j;
 		if(i > 0) {
 			boolean encontre = false;
 			for(j = 0; j < i && !encontre; j++) {
 				if(model_patentes.get(j).equals(p)) {
 					encontre = true;
-					ret = 1;
+					ret = j;
 				}
 			}
 		}
