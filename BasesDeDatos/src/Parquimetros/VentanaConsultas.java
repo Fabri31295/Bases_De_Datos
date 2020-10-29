@@ -1,8 +1,10 @@
+/*
+ * @autores: Almaraz Fabricio, Pacione Luciano
+ * 
+ */
 package Parquimetros;
 
-import java.awt.EventQueue;
 
-import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.DefaultListModel;
@@ -15,42 +17,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Vector;
 import java.awt.event.ActionEvent;
-import java.awt.Scrollbar;
 import java.awt.ScrollPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
-
-import com.mysql.cj.jdbc.result.ResultSetMetaData;
-
 import quick.dbtable.*;
-
 import java.awt.Rectangle;
-import javax.swing.JTable;
 import javax.swing.JSeparator;
-import java.awt.Panel;
-import javax.swing.JEditorPane;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
 
+
+@SuppressWarnings("serial")
 public class VentanaConsultas extends javax.swing.JFrame {
 
 	protected Connection conexionBD = null;
 
 	private JTextArea textConsulta;
-	private JButton btnEjecutar;
+	private JButton btnConsultar;
 	private JButton btnLimpiar;
-	private JButton btnABM;
 	private ScrollPane scrollPaneTablas;
 	private ScrollPane scrollPaneAtributos;
 	private JList listaTablas;
@@ -60,10 +47,11 @@ public class VentanaConsultas extends javax.swing.JFrame {
 	private JSeparator separatorHorizontal;
 	private JSeparator separatorVertical;
 	private DBTable tablaConsultas;
-
 	private DefaultListModel modelTablas;
 	private DefaultListModel modelAtributos;
 
+	
+	
 	public VentanaConsultas(Connection c) {
 		super();
 		conexionBD = c;
@@ -83,25 +71,22 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		this.setResizable(false);
 
 		textConsulta = new JTextArea();
-		textConsulta.setLineWrap(true);
-		textConsulta.setWrapStyleWord(true);
 		textConsulta.setBounds(10, 11, 388, 74);
 		getContentPane().add(textConsulta);
 
 		tablaConsultas = new DBTable();
-		tablaConsultas.listenKeyPressEventsWholeWindow = false;
 		tablaConsultas.setBounds(10, 125, 388, 306);
 		getContentPane().add(tablaConsultas);
 		tablaConsultas.setEditable(false);
 
-		btnEjecutar = new JButton("Ejecutar");
-		btnEjecutar.addActionListener(new ActionListener() {
+		btnConsultar = new JButton("Consultar");
+		btnConsultar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				examinarConsulta();
 			}
 		});
-		btnEjecutar.setBounds(454, 12, 160, 35);
-		getContentPane().add(btnEjecutar);
+		btnConsultar.setBounds(454, 12, 160, 35);
+		getContentPane().add(btnConsultar);
 
 		btnLimpiar = new JButton("Limpiar");
 		btnLimpiar.addActionListener(new ActionListener() {
@@ -163,8 +148,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 				desconectarBD();
 				setVisible(false);
 				limpiarVentanaConsultas();
-				VentanaPrincipal p = VentanaPrincipal.getInstancia();
-				p.setVisible(true);
+				dispose();
 			}
 		});
 		btnCerrarSesion.setBounds(454, 384, 160, 35);
@@ -174,6 +158,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		modelAtributos = new DefaultListModel();
 	}
 
+	
 	private void limpiarVentanaConsultas() {
 		limpiarTextArea();
 		limpiarTabla();
@@ -181,18 +166,22 @@ public class VentanaConsultas extends javax.swing.JFrame {
 
 	}
 
+	
 	private void limpiarTextArea() {
 		textConsulta.setText("");
 	}
 
+	
 	private void limpiarTabla() {
 		tablaConsultas.removeAllRows();
 	}
 
+	
 	private void limpiarAtributos() {
 		modelAtributos.removeAllElements();
 	}
 
+	
 	public void llenarListaTablas() {
 		try {
 
@@ -207,11 +196,11 @@ public class VentanaConsultas extends javax.swing.JFrame {
 			this.setVisible(true);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	
 	private void obtenerAtributosTabla() {
 		try {
 
@@ -228,12 +217,13 @@ public class VentanaConsultas extends javax.swing.JFrame {
 			}
 
 			listaAtributos.setModel(modelAtributos);
+			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
+	
 	
 	private void examinarConsulta() {
 		try {
@@ -251,11 +241,10 @@ public class VentanaConsultas extends javax.swing.JFrame {
 			} 
 		}
 		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "No se pudo actualizar correctamente", "ERROR", 0);
 		}
 	}
+	
 	
 	private void obtenerTabla(String sql) {
 		try {
@@ -278,24 +267,6 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		}
 	}
 
-	private void conectarBD(String user, String password) {
-		if (conexionBD == null) {
-			try {
-
-				String servidor = "localhost:3306";
-				String baseDatos = "parquimetros";
-				String usuario = user;
-				String clave = password;
-				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
-						+ "?serverTimezone=America/Argentina/Buenos_Aires";
-
-				conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
-
-			} catch (SQLException ex) {
-
-			}
-		}
-	}
 
 	private void desconectarBD() {
 		if (this.conexionBD != null) {
