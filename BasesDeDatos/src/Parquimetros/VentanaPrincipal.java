@@ -108,11 +108,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 			            public void dispose(){
 			                getFrame().setVisible(true);
 			                super.dispose();
+							desconectarBD();
 			            }
 					};
 					v.setVisible(true);
 					dispose();
-					desconectarBD();
 				} else
 					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
 			}
@@ -129,11 +129,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 							public void dispose(){
 								getFrame().setVisible(true);
 								super.dispose();
+								desconectarBD();
 				            }
 						};
 						v.setVisible(true);
 						dispose();
-						desconectarBD();
 					} else {
 						JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
 						desconectarBD();
