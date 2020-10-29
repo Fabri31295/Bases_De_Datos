@@ -1,6 +1,6 @@
 # Autores: Almaraz Fabricio, Pacione Luciano
-
-# Carga de datos para la base de datos parquimetros
+#
+# Carga de datos de la BD parquimetros
 
 USE parquimetros;
 

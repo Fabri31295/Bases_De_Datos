@@ -1,4 +1,10 @@
+# Bases de Datos, Segundo cuatrimestre 2020
+# Universidad Nacional del Sur
+#
 # Autores: Almaraz Fabricio, Pacione Luciano
+#
+# Script para la creacion de la base de datos, usuarios y vistas.
+
 # -----------------------------------------------------------------------------
 # Creacion de base de datos.
 CREATE DATABASE parquimetros;
@@ -16,7 +22,7 @@ CREATE TABLE conductores (
   apellido VARCHAR(50) NOT NULL,
   direccion VARCHAR(50) NOT NULL,
   telefono VARCHAR(30),
-  
+
 
   CONSTRAINT pk_conductores
   PRIMARY KEY (dni)
@@ -224,5 +230,7 @@ GRANT SELECT, INSERT ON parquimetros.accede TO 'inspector'@'%';
 GRANT SELECT ON parquimetros.asociado_con TO 'inspector'@'%';
 
 GRANT SELECT ON parquimetros.parquimetros TO 'inspector'@'%';
+
+GRANT SELECT ON parquimetros.automoviles TO 'inspector'@'%';
 
 # -----------------------------------------------------------------------------
