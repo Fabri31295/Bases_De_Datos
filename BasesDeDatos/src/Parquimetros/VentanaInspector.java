@@ -38,11 +38,11 @@ public class VentanaInspector extends javax.swing.JFrame{
 	private JScrollPane scroll_parquimetros;
 	private JScrollPane scroll_multas;
 	private JScrollPane scroll_errores;
-	private DefaultListModel model_parquimetros;
-	private DefaultListModel model_patentes;
-	private DefaultListModel model_errores;
+	private DefaultListModel<Object> model_parquimetros;
+	private DefaultListModel<Object> model_patentes;
+	private DefaultListModel<Object> model_errores;
 	private DefaultTableModel model_tabla;
-	private JList lista_patentes,lista_parquimetros,lista_errores;
+	private JList<Object> lista_patentes,lista_parquimetros,lista_errores;
 	private JTable table;
 	private JTextPane informacion;
 	private JButton set_patente,remove_patente;
@@ -136,7 +136,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		txt_error.setText("errores");
 		getContentPane().add(txt_error);
 		
-		lista_patentes = new JList<String>();
+		lista_patentes = new JList<Object>();
 		scroll_patentes.setViewportView(lista_patentes);
 		
 		lista_parquimetros = new JList<Object>();
@@ -151,9 +151,9 @@ public class VentanaInspector extends javax.swing.JFrame{
 		        return false;
 		      }
 		 };
-		model_patentes = new DefaultListModel<String>();
+		model_patentes = new DefaultListModel<Object>();
 		model_parquimetros = new DefaultListModel<Object>();
-		model_errores = new DefaultListModel<String>();
+		model_errores = new DefaultListModel<Object>();
 		
 		table = new JTable(model_tabla);
 		table.setFont(new Font("Montserrat", Font.BOLD, 10));

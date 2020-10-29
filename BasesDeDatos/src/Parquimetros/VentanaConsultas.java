@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,15 +39,15 @@ public class VentanaConsultas extends javax.swing.JFrame {
 	private JButton btnLimpiar;
 	private ScrollPane scrollPaneTablas;
 	private ScrollPane scrollPaneAtributos;
-	private JList listaTablas;
-	private JList listaAtributos;
+	private JList<Object> listaTablas;
+	private JList<Object> listaAtributos;
 	private JLabel labelTablas;
 	private JLabel labelAtributos;
 	private JSeparator separatorHorizontal;
 	private JSeparator separatorVertical;
 	private DBTable tablaConsultas;
-	private DefaultListModel modelTablas;
-	private DefaultListModel modelAtributos;
+	private DefaultListModel<Object> modelTablas;
+	private DefaultListModel<Object> modelAtributos;
 
 	
 	
@@ -128,7 +127,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		separatorVertical.setBounds(426, 24, 19, 407);
 		getContentPane().add(separatorVertical);
 
-		listaTablas = new JList();
+		listaTablas = new JList<Object>();
 		scrollPaneTablas.add(listaTablas);
 		listaTablas.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -138,7 +137,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		listaTablas.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		listaTablas.setBounds(454, 127, 156, 110);
 
-		listaAtributos = new JList();
+		listaAtributos = new JList<Object>();
 		scrollPaneAtributos.add(listaAtributos);
 		listaAtributos.setBounds(454, 263, 156, 110);
 
@@ -154,8 +153,8 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		btnCerrarSesion.setBounds(454, 384, 160, 35);
 		getContentPane().add(btnCerrarSesion);
 	
-		modelTablas = new DefaultListModel();
-		modelAtributos = new DefaultListModel();
+		modelTablas = new DefaultListModel<Object>();
+		modelAtributos = new DefaultListModel<Object>();
 	}
 
 	
