@@ -4,7 +4,6 @@
  */
 package Parquimetros;
 
-
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.DefaultListModel;
@@ -28,14 +27,13 @@ import quick.dbtable.*;
 import java.awt.Rectangle;
 import javax.swing.JSeparator;
 
-
 @SuppressWarnings("serial")
 public class VentanaConsultas extends javax.swing.JFrame {
 
 	protected Connection conexionBD = null;
 
 	private JTextArea textConsulta;
-	private JButton btnConsultar;
+	private JButton btnEjecutar;
 	private JButton btnLimpiar;
 	private ScrollPane scrollPaneTablas;
 	private ScrollPane scrollPaneAtributos;
@@ -49,8 +47,6 @@ public class VentanaConsultas extends javax.swing.JFrame {
 	private DefaultListModel<Object> modelTablas;
 	private DefaultListModel<Object> modelAtributos;
 
-	
-	
 	public VentanaConsultas(Connection c) {
 		super();
 		conexionBD = c;
@@ -78,14 +74,14 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		getContentPane().add(tablaConsultas);
 		tablaConsultas.setEditable(false);
 
-		btnConsultar = new JButton("Consultar");
-		btnConsultar.addActionListener(new ActionListener() {
+		btnEjecutar = new JButton("Ejecutar");
+		btnEjecutar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				examinarConsulta();
 			}
 		});
-		btnConsultar.setBounds(454, 12, 160, 35);
-		getContentPane().add(btnConsultar);
+		btnEjecutar.setBounds(454, 12, 160, 35);
+		getContentPane().add(btnEjecutar);
 
 		btnLimpiar = new JButton("Limpiar");
 		btnLimpiar.addActionListener(new ActionListener() {
@@ -152,12 +148,11 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		});
 		btnCerrarSesion.setBounds(454, 384, 160, 35);
 		getContentPane().add(btnCerrarSesion);
-	
+
 		modelTablas = new DefaultListModel<Object>();
 		modelAtributos = new DefaultListModel<Object>();
 	}
 
-	
 	private void limpiarVentanaConsultas() {
 		limpiarTextArea();
 		limpiarTabla();
@@ -165,22 +160,18 @@ public class VentanaConsultas extends javax.swing.JFrame {
 
 	}
 
-	
 	private void limpiarTextArea() {
 		textConsulta.setText("");
 	}
 
-	
 	private void limpiarTabla() {
 		tablaConsultas.removeAllRows();
 	}
 
-	
 	private void limpiarAtributos() {
 		modelAtributos.removeAllElements();
 	}
 
-	
 	public void llenarListaTablas() {
 		try {
 
@@ -199,7 +190,6 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		}
 	}
 
-	
 	private void obtenerAtributosTabla() {
 		try {
 
@@ -216,35 +206,34 @@ public class VentanaConsultas extends javax.swing.JFrame {
 			}
 
 			listaAtributos.setModel(modelAtributos);
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 	}
-	
-	
+
 	private void examinarConsulta() {
 		try {
 			String sql = textConsulta.getText().trim();
-			String[] words = sql.split(" ", 2);
-			String firstWord = words[0];
-			if(firstWord.compareToIgnoreCase("Select")==0)
-				obtenerTabla(sql);
-			else {
-				Statement stmt = this.conexionBD.createStatement();
-				stmt.execute(sql);
-				JOptionPane.showMessageDialog(null, "Comando ejecutado con exito");
-				limpiarTextArea();
-				stmt.close();
-			} 
-		}
-		catch (SQLException e) {
+			if (!sql.equals("")) {
+				String[] words = sql.split(" ", 2);
+				String firstWord = words[0];
+				if (firstWord.compareToIgnoreCase("Select") == 0)
+					obtenerTabla(sql);
+				else {
+					Statement stmt = this.conexionBD.createStatement();
+					stmt.execute(sql);
+					JOptionPane.showMessageDialog(null, "Comando ejecutado con exito");
+					limpiarTextArea();
+					stmt.close();
+				}
+			}
+		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "No se pudo actualizar correctamente", "ERROR", 0);
 		}
 	}
-	
-	
+
 	private void obtenerTabla(String sql) {
 		try {
 
@@ -252,7 +241,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 			ResultSet rs = stmt.executeQuery(sql);
 
 			tablaConsultas.refresh(rs);
-			for(int i = 0; i < tablaConsultas.getColumnCount(); i++) {
+			for (int i = 0; i < tablaConsultas.getColumnCount(); i++) {
 				if (tablaConsultas.getColumn(i).getType() == Types.TIME) {
 					tablaConsultas.getColumn(i).setType(Types.CHAR);
 				}
@@ -265,7 +254,6 @@ public class VentanaConsultas extends javax.swing.JFrame {
 			JOptionPane.showMessageDialog(null, "Consulta incorrecta", "ERROR", 0);
 		}
 	}
-
 
 	private void desconectarBD() {
 		if (this.conexionBD != null) {
