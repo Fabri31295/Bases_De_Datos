@@ -58,7 +58,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		super();
 		conexionBD = c;
 		legajo = leg;
-		date = new Fecha();
+		//date = new Fecha();
 		initialize();
 	}
 
@@ -215,6 +215,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		confirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(lista_parquimetros.getSelectedValue() != null) {
+						date = new Fecha();
 						almacenarPatentes();
 						conexionParquimetro();
 				}
@@ -430,13 +431,15 @@ public class VentanaInspector extends javax.swing.JFrame{
 	 * Muestra por interfaz las multas generadas
 	 */
 	private void mostrarMultas() {
-			model_tabla.addColumn("Nro");
-			model_tabla.addColumn("Fecha");
-			model_tabla.addColumn("Hora");
-			model_tabla.addColumn("Calle");
-			model_tabla.addColumn("Altura");
-			model_tabla.addColumn("Patente");
-			model_tabla.addColumn("Legajo");
+			if(model_tabla.getColumnCount() == 0) {
+				model_tabla.addColumn("Nro");
+				model_tabla.addColumn("Fecha");
+				model_tabla.addColumn("Hora");
+				model_tabla.addColumn("Calle");
+				model_tabla.addColumn("Altura");
+				model_tabla.addColumn("Patente");
+				model_tabla.addColumn("Legajo");
+			}
 			for(ArrayList<String> multa: multados)
 				model_tabla.addRow(new Object[]{multa.get(0),multa.get(1),multa.get(2),multa.get(3),multa.get(4),multa.get(5),multa.get(6)});	
 	
