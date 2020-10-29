@@ -48,7 +48,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 	protected Connection conexionBD = null;
 
 	private JTextArea textConsulta;
-	private JButton btnConsultar;
+	private JButton btnEjecutar;
 	private JButton btnLimpiar;
 	private JButton btnABM;
 	private ScrollPane scrollPaneTablas;
@@ -83,22 +83,25 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		this.setResizable(false);
 
 		textConsulta = new JTextArea();
+		textConsulta.setLineWrap(true);
+		textConsulta.setWrapStyleWord(true);
 		textConsulta.setBounds(10, 11, 388, 74);
 		getContentPane().add(textConsulta);
 
 		tablaConsultas = new DBTable();
+		tablaConsultas.listenKeyPressEventsWholeWindow = false;
 		tablaConsultas.setBounds(10, 125, 388, 306);
 		getContentPane().add(tablaConsultas);
 		tablaConsultas.setEditable(false);
 
-		btnConsultar = new JButton("Consultar");
-		btnConsultar.addActionListener(new ActionListener() {
+		btnEjecutar = new JButton("Ejecutar");
+		btnEjecutar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				examinarConsulta();
 			}
 		});
-		btnConsultar.setBounds(454, 12, 160, 35);
-		getContentPane().add(btnConsultar);
+		btnEjecutar.setBounds(454, 12, 160, 35);
+		getContentPane().add(btnEjecutar);
 
 		btnLimpiar = new JButton("Limpiar");
 		btnLimpiar.addActionListener(new ActionListener() {

@@ -95,48 +95,84 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		textPassword.setBounds(185, 75, 86, 20);
 		getContentPane().add(textPassword);
 	}
-	
+
 	private void acceder() {
-		
-		try {
-			
+
 		String userIngresado = textUsuario.getText();
 		String passwordIngresado = new String(textPassword.getPassword());
-		
-		conectarBD(userIngresado, passwordIngresado);
-		
+
+		if (userIngresado.equals("") || passwordIngresado.equals(""))
+			JOptionPane.showMessageDialog(null, "Ingrese usuario y contraseña", "ERROR", 0);
+		else {
+
+			boolean admin = probarAdmin(userIngresado,passwordIngresado);
+			if(!admin){
+				probarInspector(userIngresado,passwordIngresado);
+			}
+
+			/*
+			if (conexionBD != null) {
+				setVisible(false);
+				VentanaConsultas v = new VentanaConsultas(conexionBD);
+				v.setVisible(true);
+			} else {
+				conectarInspectorBD();
+				Statement stmt = this.conexionBD.createStatement();
+
+				ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
+						+ userIngresado + " AND password = md5('" + passwordIngresado + "')");
+
+				if (rs.next()) {
+					setVisible(false);
+					VentanaInspector v = new VentanaInspector(conexionBD, userIngresado);
+					v.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
+					desconectarBD();
+				}
+			}*/
+			textUsuario.setText("");
+			textPassword.setText("");
+
+		}
+	}
+	
+	private boolean probarAdmin(String user, String password) {
+		conectarBD(user,password);
 		if(conexionBD != null) {
 			setVisible(false);
 			VentanaConsultas v = new VentanaConsultas(conexionBD);
 			v.setVisible(true);
+			return true;
 		}
-		else {
-			conectarInspectorBD();
+		return false;	
+	}
+	
+	private boolean probarInspector(String user, String password) {
+		boolean inspector=false;
+		try {
+			conectarBD("inspector","inspector");
 			Statement stmt = this.conexionBD.createStatement();
+			ResultSet rs;
+			rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
+					+ user + " AND password = md5('" + password+ "')");
 			
-			ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
-					+ userIngresado + " AND password = md5('" + passwordIngresado + "')");
-			
-			if(rs.next()) {
+			if (rs.next()) {
 				setVisible(false);
-				VentanaInspector v = new VentanaInspector(conexionBD,userIngresado);
+				VentanaInspector v = new VentanaInspector(conexionBD, user);
 				v.setVisible(true);
-			}
-			else {
+				inspector = true;
+			} else {
 				JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
 				desconectarBD();
 			}
-		}
-		textUsuario.setText("");
-		textPassword.setText("");
-	
-		} 
-		catch (SQLException e) {
+			
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return inspector;
 	}
-
 
 	private void conectarBD(String user, String password) {
 		if (conexionBD == null) {
@@ -146,25 +182,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				String baseDatos = "parquimetros";
 				String usuario = user;
 				String clave = password;
-				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
-						+ "?serverTimezone=America/Argentina/Buenos_Aires";
-
-				conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
-
-			} catch (SQLException ex) {
-
-			}
-		}
-	}
-	
-	private void conectarInspectorBD() {
-		if (conexionBD == null) {
-			try {
-
-				String servidor = "localhost:3306";
-				String baseDatos = "parquimetros";
-				String usuario = "inspector";
-				String clave = "inspector";
 				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
 						+ "?serverTimezone=America/Argentina/Buenos_Aires";
 
