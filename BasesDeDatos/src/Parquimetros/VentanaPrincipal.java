@@ -1,7 +1,11 @@
+/*
+ * @autores: Almaraz Fabricio, Pacione Luciano
+ * 
+ */
+
 package Parquimetros;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -11,21 +15,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.awt.event.ActionEvent;
-import java.awt.Canvas;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 import javax.swing.JTextField;
-import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
+@SuppressWarnings("serial")
 public class VentanaPrincipal extends javax.swing.JFrame {
 
-	private static VentanaPrincipal instancia;
+	
 	private JTextField textUsuario;
 	private JPasswordField textPassword;
-
 	protected Connection conexionBD = null;
 
 	/**
@@ -35,8 +35,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaPrincipal window = new VentanaPrincipal();
-					window.setVisible(true);
+					
+					new VentanaPrincipal().setVisible(true);
+			
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -44,15 +45,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
-
-	public static VentanaPrincipal getInstancia() {
-		if (instancia == null)
-			instancia = new VentanaPrincipal();
-		return instancia;
-	}
 
 	private VentanaPrincipal() {
 		initialize();
@@ -95,86 +87,70 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		textPassword.setBounds(185, 75, 86, 20);
 		getContentPane().add(textPassword);
 	}
-
+	
+	
+	//Método para conseguir el JFrame de la Ventana Principal
+	private JFrame getFrame(){
+	    return this;
+	}
+	
+	
 	private void acceder() {
 
-		String userIngresado = textUsuario.getText();
-		String passwordIngresado = new String(textPassword.getPassword());
+		try {
+			String user = textUsuario.getText();
+			String password = new String(textPassword.getPassword());
 
-		if (userIngresado.equals("") || passwordIngresado.equals(""))
-			JOptionPane.showMessageDialog(null, "Ingrese usuario y contraseña", "ERROR", 0);
-		else {
-
-			boolean admin = probarAdmin(userIngresado,passwordIngresado);
-			if(!admin){
-				probarInspector(userIngresado,passwordIngresado);
-			}
-
-			/*
-			if (conexionBD != null) {
-				setVisible(false);
-				VentanaConsultas v = new VentanaConsultas(conexionBD);
-				v.setVisible(true);
-			} else {
-				conectarInspectorBD();
-				Statement stmt = this.conexionBD.createStatement();
-
-				ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
-						+ userIngresado + " AND password = md5('" + passwordIngresado + "')");
-
-				if (rs.next()) {
-					setVisible(false);
-					VentanaInspector v = new VentanaInspector(conexionBD, userIngresado);
+			if(user.equals("admin")) { // Si quiere acceder como administrador
+				conexionBD = conectarBD("admin",password);
+				if(conexionBD != null) {
+					VentanaConsultas v = new VentanaConsultas(conexionBD) {
+			            public void dispose(){
+			                getFrame().setVisible(true);
+			                super.dispose();
+			            }
+					};
 					v.setVisible(true);
-				} else {
-					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
+					dispose();
 					desconectarBD();
+				} else
+					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
+			}
+			else 
+				if(!user.equals("") && !password.equals("")) {
+					
+					conexionBD = conectarBD("inspector", "inspector");
+					Statement stmt = conexionBD.createStatement();
+					
+					ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = '"+user+"' AND password = md5('"+password+"')");
+					
+					if (rs.next()) {
+						VentanaInspector v = new VentanaInspector(conexionBD, user) {
+							public void dispose(){
+								getFrame().setVisible(true);
+								super.dispose();
+				            }
+						};
+						v.setVisible(true);
+						dispose();
+						desconectarBD();
+					} else {
+						JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
+						desconectarBD();
+					}
 				}
-			}*/
+
 			textUsuario.setText("");
 			textPassword.setText("");
 
-		}
-	}
-	
-	private boolean probarAdmin(String user, String password) {
-		conectarBD(user,password);
-		if(conexionBD != null) {
-			setVisible(false);
-			VentanaConsultas v = new VentanaConsultas(conexionBD);
-			v.setVisible(true);
-			return true;
-		}
-		return false;	
-	}
-	
-	private boolean probarInspector(String user, String password) {
-		boolean inspector=false;
-		try {
-			conectarBD("inspector","inspector");
-			Statement stmt = this.conexionBD.createStatement();
-			ResultSet rs;
-			rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = "
-					+ user + " AND password = md5('" + password+ "')");
-			
-			if (rs.next()) {
-				setVisible(false);
-				VentanaInspector v = new VentanaInspector(conexionBD, user);
-				v.setVisible(true);
-				inspector = true;
-			} else {
-				JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto", "ERROR", 0);
-				desconectarBD();
-			}
-			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// Aca es mejor no mostrar nada pero algo hay que poner
 		}
-		return inspector;
 	}
 
-	private void conectarBD(String user, String password) {
+	
+	private Connection conectarBD(String user, String password) {
+		Connection c = null;
 		if (conexionBD == null) {
 			try {
 
@@ -185,14 +161,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
 						+ "?serverTimezone=America/Argentina/Buenos_Aires";
 
-				conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
+				c =  DriverManager.getConnection(uriConexion, usuario, clave);
 
 			} catch (SQLException ex) {
-
+				// Aca es mejor no mostrar nada pero algo hay que poner
 			}
 		}
+		return c;
 	}
 
+	
 	private void desconectarBD() {
 		if (this.conexionBD != null) {
 			try {
