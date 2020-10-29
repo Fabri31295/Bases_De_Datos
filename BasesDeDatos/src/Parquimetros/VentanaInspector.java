@@ -1,16 +1,17 @@
-// Almaraz Fabricio, Pacione Luciano
+/*
+ * @autores: Almaraz Fabricio, Pacione Luciano
+ * 
+ */
 package Parquimetros;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -25,12 +26,13 @@ import javax.swing.JTextPane;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
+@SuppressWarnings("serial")
 public class VentanaInspector extends javax.swing.JFrame{
 
 	
 	protected Connection conexionBD = null;
 	private ArrayList<String> patentes;
-	private ArrayList<ArrayList<String>> erroneas;
+	private ArrayList<String> erroneas;
 	private ArrayList<ArrayList<String>> multados;
 	private JScrollPane scroll_patentes;
 	private JScrollPane scroll_parquimetros;
@@ -42,12 +44,12 @@ public class VentanaInspector extends javax.swing.JFrame{
 	private DefaultTableModel model_tabla;
 	private JList lista_patentes,lista_parquimetros,lista_errores;
 	private JTable table;
-	private JTextPane informacion,info_errores;
+	private JTextPane informacion;
 	private JButton set_patente,remove_patente;
 	private JButton confirmar,cerrar_sesion;
 	private JTextField ingreso_patente;
 	private JLabel txt_patente,txt_parquimetros;
-	private JLabel txt_multas,txt_info;
+	private JLabel txt_multas,txt_info,txt_error;
 	private Fecha date;
 	private String legajo;		
 	
@@ -126,8 +128,13 @@ public class VentanaInspector extends javax.swing.JFrame{
 		
 		txt_info = new JLabel();
 		txt_info.setBounds(250,316,80,30);
-		txt_info.setText("Información");
+		txt_info.setText("información");
 		getContentPane().add(txt_info);
+		
+		txt_error = new JLabel();
+		txt_error.setBounds(41,316,80,30);
+		txt_error.setText("errores");
+		getContentPane().add(txt_error);
 		
 		lista_patentes = new JList<String>();
 		scroll_patentes.setViewportView(lista_patentes);
@@ -136,6 +143,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		scroll_parquimetros.setViewportView(lista_parquimetros);
 		
 		lista_errores = new JList<Object>();
+		lista_errores.setAlignmentX(CENTER_ALIGNMENT);
 		scroll_errores.setViewportView(lista_errores);
 		
 		model_tabla = new DefaultTableModel() {
@@ -146,11 +154,12 @@ public class VentanaInspector extends javax.swing.JFrame{
 		model_patentes = new DefaultListModel<String>();
 		model_parquimetros = new DefaultListModel<Object>();
 		model_errores = new DefaultListModel<String>();
-		 
+		
 		table = new JTable(model_tabla);
 		table.setFont(new Font("Montserrat", Font.BOLD, 10));
 		scroll_multas.setViewportView(table);
 	}
+	
 	
 	/*
 	 * Genera los botones que se muestran por interfaz y les da funcionalidad.
@@ -218,9 +227,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		cerrar_sesion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				desconectarBD();
-				setVisible(false);
-				VentanaPrincipal p = VentanaPrincipal.getInstancia();
-				p.setVisible(true);
+				dispose();
 			}
 		});
 		
@@ -229,6 +236,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		getContentPane().add(confirmar);
 		getContentPane().add(cerrar_sesion);
 	}
+	
 	
 	/* 
 	 * Carga los parquimetros de la base de datos para mostrarlos en la interfaz
@@ -252,6 +260,33 @@ public class VentanaInspector extends javax.swing.JFrame{
 		}
 	}
 	
+	
+	/*
+	 * Guarda las patentes ingresadas por el usuario en un ArrayList y 
+	 * controla que pertenezcan a la base de datos
+	 */
+	private void almacenarPatentes() {
+		if(model_patentes.size() > 0)
+			try {
+				patentes = new ArrayList<String>();
+				erroneas = new ArrayList<String>();
+				java.sql.Statement stat = conexionBD.createStatement();
+				ResultSet res = null;
+				for(int i = 0; i < model_patentes.size(); i++) {
+					res = stat.executeQuery("SELECT patente FROM automoviles WHERE patente = '"+model_patentes.get(i)+"';");	
+					if(res.next())
+						patentes.add((String) model_patentes.get(i));
+					else
+						erroneas.add((String) model_patentes.get(i));
+				}
+				res.close();
+		}catch(SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	
+	
 	/* 
 	 *  Simula la conexion de la unidad al parquimetro seleccionado
 	 */
@@ -261,7 +296,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 			
 			informacion.setText("Registrando el acceso del inspector al parquímetro...");
 			String txt = (String) lista_parquimetros.getSelectedValue();
-			String[] parts = txt.split(" ");
+			String[] parts = txt.split(" "); // obtengo calle y altura por separado 
 			String id_asociado = asociado(parts[0],parts[1]);
 			
 			if(id_asociado != null) {
@@ -269,8 +304,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 				if(!model_patentes.isEmpty()) {
 					informacion.setText(informacion.getText()+"\n\nGenerando las multas correspondientes...");
 					multados = new ArrayList<ArrayList<String>>();
-					erroneas = new ArrayList<ArrayList<String>>();
-					cargarMultas(parts[0],parts[1],id_asociado);
+					generarMultas(parts[0],parts[1],id_asociado);
 					mostrarMultas();
 				}
 			}else {
@@ -327,11 +361,13 @@ public class VentanaInspector extends javax.swing.JFrame{
 	}
 	
 	/* 
-	 * Se encarga de generar las multas para las patentes que no posean un estacionamiento abierto
+	 * Se encarga de generar las multas para las patentes pertenecientes a la base de datos 
+	 * que no posean un estacionamiento abierto
 	 */
-	private void cargarMultas(String calle,String altura,String id_asociado) {
+	private void generarMultas(String calle,String altura,String id_asociado) {
 
 		try {
+			
 			java.sql.Statement stat = conexionBD.createStatement();
 			ResultSet res = stat.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = '" + altura+"';");			
 			
@@ -357,7 +393,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 						
 						try {
 							stat.execute("INSERT INTO multa(numero, fecha, hora, patente, id_asociado_con) VALUES("+n_multa+", '"+date.getDateSQL()+"', '"+date.getTimeSQL()+"', '"+patentes.get(i)+"', "+Integer.valueOf(id_asociado)+");");
-						
+							
 							pm = new ArrayList<String>();
 							pm.add(String.valueOf(n_multa++));
 							pm.add(date.getDateSQL().toString());
@@ -370,7 +406,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 							multados.add(pm);
 						
 						}catch(java.sql.SQLException ex) {
-							erroneas.add(pm);
+							ex.printStackTrace();
 						}
 					}
 				}
@@ -404,21 +440,10 @@ public class VentanaInspector extends javax.swing.JFrame{
 			model_tabla.addColumn("Legajo");
 			for(ArrayList<String> multa: multados)
 				model_tabla.addRow(new Object[]{multa.get(0),multa.get(1),multa.get(2),multa.get(3),multa.get(4),multa.get(5),multa.get(6)});	
-
-			for(ArrayList<String> error: erroneas) {
-				model_errores.add(0,error.get(5));
-			}
-			lista_errores.setModel(model_errores);
-	}
 	
-	/*
-	 * Guarda las patentes ingresadas por el usuario en un ArrayList
-	 */
-	private void almacenarPatentes() {
-		patentes = new ArrayList<String>();
-		for(int i = 0; i < model_patentes.size(); i++) {
-			patentes.add((String) model_patentes.get(i));
-		}
+			for(String e: erroneas) 
+				model_errores.add(0, e);
+			lista_errores.setModel(model_errores);
 	}
 	
 	/*
