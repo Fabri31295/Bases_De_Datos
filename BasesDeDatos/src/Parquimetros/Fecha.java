@@ -28,8 +28,8 @@ public class Fecha {
 
 
 	public String getDia() {
-		return "Do";
-	  /*  switch(new SimpleDateFormat("E").format(date)) {
+		switch(new SimpleDateFormat("E").format(date)) {
+		
 	    	case("Monday"):{return "Lu";}
 	    	case("Tuesday"):{return "Ma";}
 	    	case("Wednesday"):{return "Mi";}
@@ -38,13 +38,11 @@ public class Fecha {
 	    	case("Saturday"):{return "Sa";}
 	    	case("Sunday"):{return "Do";}
 	    }
-	    return null;*/
+	    return null;
 	}
 
 	
 	public String getTurno() {
-		return "M";
-		/*
 	    int hora = Integer.parseInt(new SimpleDateFormat("H").format(date));
 	    if(hora >= 8 && hora < 14) 
 	    	return "M";
@@ -52,7 +50,7 @@ public class Fecha {
 	    	if(hora >= 14 && hora <= 20) 
 	    		return"T";
 	    	
-	    return null;*/
+	    return null;
 	}
 	
 }
