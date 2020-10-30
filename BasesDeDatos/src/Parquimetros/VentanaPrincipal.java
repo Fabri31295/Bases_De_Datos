@@ -94,7 +94,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 	    return this;
 	}
 	
-	
+	/*
+	 * Controles para saber si se debe ingresar como admin,
+	 * como inspector o si no es posible entrar por algun
+	 * campo erroneo
+	 */
 	private void acceder() {
 
 		try {
@@ -144,11 +148,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 			textPassword.setText("");
 
 		} catch (SQLException e) {
-			// Aca es mejor no mostrar nada pero algo hay que poner
+			//Error
 		}
 	}
 
-	
+	/*
+	 * Abre la conexion a la base de datos con el usuario y la contraseña
+	 * que ingresa el usuario
+	 */
 	private Connection conectarBD(String user, String password) {
 		Connection c = null;
 		if (conexionBD == null) {
@@ -164,13 +171,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				c =  DriverManager.getConnection(uriConexion, usuario, clave);
 
 			} catch (SQLException ex) {
-				// Aca es mejor no mostrar nada pero algo hay que poner
+				//Error
 			}
 		}
 		return c;
 	}
 
-	
+	/*
+	 * Cierra la conexion a la base de datos
+	 */
 	private void desconectarBD() {
 		if (this.conexionBD != null) {
 			try {

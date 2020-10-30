@@ -153,6 +153,9 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		modelAtributos = new DefaultListModel<Object>();
 	}
 
+	/*
+	 * Limpia la ventana completamente cuando se presiona el boton "Limpiar"
+	 */
 	private void limpiarVentanaConsultas() {
 		limpiarTextArea();
 		limpiarTabla();
@@ -160,18 +163,30 @@ public class VentanaConsultas extends javax.swing.JFrame {
 
 	}
 
+	/*
+	 * Limpia el campo donde se ingresa la consulta
+	 */
 	private void limpiarTextArea() {
 		textConsulta.setText("");
 	}
 
+	/*
+	 * Limpia la tabla donde se muestra el resultado de la consulta
+	 */
 	private void limpiarTabla() {
 		tablaConsultas.removeAllRows();
 	}
 
+	/*
+	 * Limpia la lista donde se muestran los atributos de cada tabla
+	 */
 	private void limpiarAtributos() {
 		modelAtributos.removeAllElements();
 	}
 
+	/*
+	 * Obtiene las tablas de la base de datos y los agrega a la lista correspondiente
+	 */
 	public void llenarListaTablas() {
 		try {
 
@@ -190,6 +205,9 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		}
 	}
 
+	/*
+	 * Obtiene los atributos (columnas) de la tabla donde se hizo click y los agrega a la lista correspondiente
+	 */
 	private void obtenerAtributosTabla() {
 		try {
 
@@ -213,6 +231,10 @@ public class VentanaConsultas extends javax.swing.JFrame {
 
 	}
 
+	/*
+	 * Se evalua si la consulta ingresada es para mostrar por tabla o para 
+	 * insertar/eliminar/actualizar	un registro
+	 */
 	private void examinarConsulta() {
 		try {
 			String sql = textConsulta.getText().trim();
@@ -234,6 +256,9 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		}
 	}
 
+	/*
+	 * Se obtiene la tabla correspondiente a la consulta ingresada
+	 */
 	private void obtenerTabla(String sql) {
 		try {
 
@@ -255,6 +280,9 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		}
 	}
 
+	/*
+	 * Se cierra la conexion a la base de datos
+	 */
 	private void desconectarBD() {
 		if (this.conexionBD != null) {
 			try {
