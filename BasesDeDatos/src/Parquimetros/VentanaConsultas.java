@@ -66,6 +66,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		this.setResizable(false);
 
 		textConsulta = new JTextArea();
+		textConsulta.setLineWrap(true);
 		textConsulta.setBounds(10, 11, 388, 74);
 		getContentPane().add(textConsulta);
 
