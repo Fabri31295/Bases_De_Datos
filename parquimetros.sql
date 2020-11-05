@@ -197,6 +197,61 @@ FROM ubicaciones AS ub JOIN parquimetros AS pq JOIN estacionamientos AS es JOIN 
 WHERE es.hora_ent is not NULL AND es.fecha_ent is not NULL AND es.hora_sal is NULL AND es.fecha_sal is NULL;
 
 # -----------------------------------------------------------------------------
+# Creacion de Stored Procedures
+
+delimiter !
+
+#  Apertura y cierre de estacionamiento
+create procedure conectar(IN id_tarjeta INT, IN id_parq INT)
+begin
+
+  # variables
+  DECLARE fechaIN DATE;
+  DECLARE horaIN TIME;
+  DECLARE fechaOUT DATE;
+  DECLARE horaOUT TIME;
+  DECLARE fechaENT DATETIME;
+  DECLARE fechaSAL DATETIME;
+  DECLARE tarifaX INT;
+  DECLARE descuentoX INT;
+  DECLARE saldoX INT;
+  DECLARE minutosDisp INT;
+  DECLARE tiempo INT;
+  DECLARE tipo CHAR(10);
+  DECLARE exito CHAR(1);  #------------> Y or N
+
+  # recupero datos de estacionamiento
+  SELECT fecha_ent INTO fechaIN FROM estacionados AS es WHERE es.id_tarjeta = id_tarjeta AND es.id_parq = id_parq;
+  SELECT hora_ent INTO horaIN FROM estacionados AS es WHERE es.id_tarjeta = id_tarjeta AND es.id_parq = id_parq;
+  SELECT fechaENT = CAST(fechaIN AS DATETIME) + CAST(horaIN AS DATETIME);
+
+  SELECT fecha_sal INTO fechaOUT FROM estacionados AS es WHERE es.id_tarjeta = id_tarjeta AND es.id_parq = id_parq;
+  SELECT hora_sal INTO horaOUT FROM estacionados AS es WHERE es.id_tarjeta = id_tarjeta AND es.id_parq = id_parq;
+  SELECT fechaSAL = CAST(fechaOUT AS DATETIME) + CAST(horaOUT AS DATETIME);
+
+  SELECT saldo INTO saldoX FROM tarjetas AS t WHERE t.id_tarjeta = id_tarjeta;
+  SELECT tarifa INTO tarifaX FROM ubicaciones AS u NATURAL JOIN parquimetros AS p WHERE p.id_parq = id_parq;
+  SELECT descuento INTO descuentoX FROM tipos_tarjeta NATURAL JOIN tarjetas AS t WHERE t.id_tarjeta = id_tarjeta;
+/*
+  if(fechaOUT == NULL AND horaOUT == NULL) THEN
+    SET tipo = "Apertura";
+    if(saldoX > 0) THEN
+      SET exito = "Y";
+    else
+      SET exito = "N";
+    SET
+    end if;
+    SET minutosDisp = saldo/(tarifaX*(1-descuentoX));
+
+  else
+    SET tipo = "Cierre";
+  end if;*/
+
+end;!
+delimiter ;
+
+
+# -----------------------------------------------------------------------------
 # Creacion de usuario administrador
 
 CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
