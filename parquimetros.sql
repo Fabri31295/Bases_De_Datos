@@ -184,6 +184,24 @@ CREATE TABLE multa (
 
 ) ENGINE=InnoDB;
 
+
+CREATE TABLE ventas (
+  id_tarjeta INT UNSIGNED NOT NULL,
+  tipo_tarjeta VARCHAR(30) NOT NULL,
+  saldo DECIMAL(5,2) NOT NULL,
+  fecha DATE,
+  hora TIME,
+
+  CONSTRAINT pk_ventas
+  PRIMARY KEY (id_tarjeta,fecha,hora),
+
+  FOREIGN KEY (id_tarjeta) REFERENCES tarjetas(id_tarjeta)
+  ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (tipo_tarjeta) REFERENCES tipos_tarjeta(tipo)
+  ON DELETE RESTRICT ON UPDATE CASCADE
+
+) ENGINE=InnoDB;
+
 # -----------------------------------------------------------------------------
 # Creacion de vista estacionados
 
@@ -250,6 +268,32 @@ begin
 end;!
 delimiter ;
 
+# -----------------------------------------------------------------------------
+# Creacion de trigger
+
+delimiter !
+
+CREATE TRIGGER triggerVentas
+AFTER INSERT ON ventas
+FOR EACH ROW
+
+BEGIN
+
+DECLARE fecha DATE;
+DECLARE hora TIME;
+DECLARE tarjeta INT;
+DECLARE tipo CHAR(30);
+DECLARE saldo INT;
+
+SET fecha = CURDATE();
+SET hora = CURTIME();
+
+
+/*SELECT t.tipo_tarjeta INTO tarjeta FROM );*/
+
+END; !
+
+delimiter ;
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario administrador
@@ -295,3 +339,7 @@ GRANT SELECT ON parquimetros.automoviles TO 'inspector'@'%';
 CREATE USER 'parquimetro'@'%' IDENTIFIED BY 'parq';
 
 GRANT EXECUTE ON PROCEDURE parquimetros.conectar TO parquimetro@'%';
+
+GRANT SELECT ON parquimetros.parquimetros TO 'parquimetro'@'%';
+
+GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';

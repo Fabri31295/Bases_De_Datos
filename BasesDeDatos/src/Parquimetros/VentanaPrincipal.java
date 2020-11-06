@@ -104,7 +104,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		try {
 			String user = textUsuario.getText();
 			String password = new String(textPassword.getPassword());
-
+			
+			if(user.equals("parquimetro")) {
+				conexionBD = conectarBD("parquimetro",password);
+				if(conexionBD != null) {
+					VentanaParquimetro v = new VentanaParquimetro(conexionBD) {
+						public void dispose() {
+							getFrame().setVisible(true);
+							super.dispose();
+							desconectarBD();
+						}
+					};
+					v.setVisible(true);
+					dispose();
+				} else
+					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto","Error",0);
+			}else
+				
 			if(user.equals("admin")) { // Si quiere acceder como administrador
 				conexionBD = conectarBD("admin",password);
 				if(conexionBD != null) {
