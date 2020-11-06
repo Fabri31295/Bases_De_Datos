@@ -289,3 +289,9 @@ GRANT SELECT ON parquimetros.parquimetros TO 'inspector'@'%';
 GRANT SELECT ON parquimetros.automoviles TO 'inspector'@'%';
 
 # -----------------------------------------------------------------------------
+
+# Creacion de usuario parquimetro
+
+CREATE USET 'parquimetro'@'%' IDENTIFIED BY 'parq';
+
+GRANT EXECUTE ON PROCEDURE parquimetros.conectar TO parquimetro@'%';
