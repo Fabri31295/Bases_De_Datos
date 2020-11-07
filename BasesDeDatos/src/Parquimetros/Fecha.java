@@ -2,6 +2,7 @@
 package Parquimetros;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Fecha {
@@ -28,17 +29,22 @@ public class Fecha {
 
 
 	public String getDia() {
-		switch(new SimpleDateFormat("E").format(date)) {
-		
-	    	case("Monday"):{return "Lu";}
-	    	case("Tuesday"):{return "Ma";}
-	    	case("Wednesday"):{return "Mi";}
-	    	case("Thursday"):{return "Ju";}
-	    	case("Friday"):{return "Vi";}
-	    	case("Saturday"):{return "Sa";}
-	    	case("Sunday"):{return "Do";}
+		switch(getDayNumberOld(date)) {
+    		case(1):{return "Do";}
+	    	case(2):{return "Lu";}
+	    	case(3):{return "Ma";}
+	    	case(4):{return "Mi";}
+	    	case(5):{return "Ju";}
+	    	case(6):{return "Vi";}
+	    	case(7):{return "Sa";}
 	    }
 	    return null;
+	}
+	
+	private int getDayNumberOld(Date date) {
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+	    return cal.get(Calendar.DAY_OF_WEEK);
 	}
 
 	
