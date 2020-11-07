@@ -216,7 +216,7 @@ WHERE es.hora_ent is not NULL AND es.fecha_ent is not NULL AND es.hora_sal is NU
 
 # -----------------------------------------------------------------------------
 # Creacion de Stored Procedures
-
+/*
 delimiter !
 
 #  Apertura y cierre de estacionamiento
@@ -250,7 +250,7 @@ begin
   SELECT saldo INTO saldoX FROM tarjetas AS t WHERE t.id_tarjeta = id_tarjeta;
   SELECT tarifa INTO tarifaX FROM ubicaciones AS u NATURAL JOIN parquimetros AS p WHERE p.id_parq = id_parq;
   SELECT descuento INTO descuentoX FROM tipos_tarjeta NATURAL JOIN tarjetas AS t WHERE t.id_tarjeta = id_tarjeta;
-/*
+
   if(fechaOUT == NULL AND horaOUT == NULL) THEN
     SET tipo = "Apertura";
     if(saldoX > 0) THEN
@@ -263,14 +263,14 @@ begin
 
   else
     SET tipo = "Cierre";
-  end if;*/
+  end if;
 
 end;!
-delimiter ;
+delimiter ;*/
 
 # -----------------------------------------------------------------------------
 # Creacion de trigger
-
+/*
 delimiter !
 
 CREATE TRIGGER triggerVentas
@@ -289,11 +289,11 @@ SET fecha = CURDATE();
 SET hora = CURTIME();
 
 
-/*SELECT t.tipo_tarjeta INTO tarjeta FROM );*/
+SELECT t.tipo_tarjeta INTO tarjeta FROM );
 
 END; !
 
-delimiter ;
+delimiter ;*/
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario administrador
@@ -333,7 +333,7 @@ GRANT SELECT ON parquimetros.parquimetros TO 'inspector'@'%';
 GRANT SELECT ON parquimetros.automoviles TO 'inspector'@'%';
 
 # -----------------------------------------------------------------------------
-
+/*
 # Creacion de usuario parquimetro
 
 CREATE USER 'parquimetro'@'%' IDENTIFIED BY 'parq';
@@ -342,4 +342,4 @@ GRANT EXECUTE ON PROCEDURE parquimetros.conectar TO parquimetro@'%';
 
 GRANT SELECT ON parquimetros.parquimetros TO 'parquimetro'@'%';
 
-GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';
+GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';*/

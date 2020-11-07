@@ -11,20 +11,22 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.MaskFormatter;
 
 @SuppressWarnings("serial")
 public class VentanaInspector extends javax.swing.JFrame{
@@ -47,18 +49,17 @@ public class VentanaInspector extends javax.swing.JFrame{
 	private JTextPane informacion;
 	private JButton set_patente,remove_patente;
 	private JButton confirmar,cerrar_sesion;
-	private JTextField ingreso_patente;
+	private JFormattedTextField ingreso_patente;
 	private JLabel txt_patente,txt_parquimetros;
 	private JLabel txt_multas,txt_info,txt_error;
 	private Fecha date;
 	private String legajo;		
-	
+	private MaskFormatter mask;
 	
 	public VentanaInspector(Connection c,String leg) {
 		super();
 		conexionBD = c;
 		legajo = leg;
-		//date = new Fecha();
 		initialize();
 	}
 
@@ -106,8 +107,12 @@ public class VentanaInspector extends javax.swing.JFrame{
 		informacion.setBorder(border);
 		informacion.setEditable(false);
 		getContentPane().add(informacion);
-		
-		ingreso_patente = new JTextField();
+		try {
+			mask = new MaskFormatter("LLL###");
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		ingreso_patente = new JFormattedTextField(mask);
 		ingreso_patente.setBounds(462, 35, 150, 30);
 		getContentPane().add(ingreso_patente);
 		
@@ -173,9 +178,9 @@ public class VentanaInspector extends javax.swing.JFrame{
 				String ingresada = ingreso_patente.getText();
 				if(ingresada.length() == 6) {
 						if(getPosicion(ingreso_patente.getText()) == -1) {
-							model_patentes.add(0,ingresada);
-							lista_patentes.setModel(model_patentes);
-							ingreso_patente.setText("");
+								model_patentes.add(0,ingresada);
+								lista_patentes.setModel(model_patentes);
+								ingreso_patente.setText("");
 						}
 						else 
 							JOptionPane.showMessageDialog(null, "Patente ya ingresada","Error", JOptionPane.ERROR_MESSAGE);					

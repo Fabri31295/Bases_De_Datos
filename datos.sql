@@ -184,7 +184,7 @@ VALUES(106,666,'21-05-20','11:00:00');
 # ASOCIADO_CON
 
 INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
-VALUES(101,1001,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-01-03')),'M','calle1',789);
+VALUES(101,1001,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-01-01')),'M','calle1',789);
 INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
 VALUES(102,1002,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-07-04')),'M','calle2',89);
 INSERT INTO asociado_con(legajo,id_asociado_con,dia,turno,calle,altura)
