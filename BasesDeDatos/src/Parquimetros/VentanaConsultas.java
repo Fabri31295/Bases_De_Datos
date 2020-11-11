@@ -211,10 +211,6 @@ public class VentanaConsultas extends javax.swing.JFrame {
 	 */
 	private void obtenerAtributosTabla() {
 		try {
-
-			if (conexionBD == null)
-				System.out.println("Null");
-
 			String tablaSeleccionada = (String) listaTablas.getSelectedValue();
 			DatabaseMetaData metaDatos = conexionBD.getMetaData();
 			ResultSet rs = metaDatos.getColumns(null, null, tablaSeleccionada, null);

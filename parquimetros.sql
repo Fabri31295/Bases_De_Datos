@@ -73,6 +73,7 @@ CREATE TABLE tarjetas (
 ) ENGINE=InnoDB;
 
 
+
 CREATE TABLE inspectores (
   legajo INT UNSIGNED NOT NULL,
   dni INT UNSIGNED NOT NULL,
@@ -129,6 +130,7 @@ CREATE TABLE estacionamientos (
   ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
+
 
 
 CREATE TABLE accede (
@@ -280,7 +282,7 @@ FOR EACH ROW
 BEGIN
 
 	INSERT INTO ventas(id_tarjeta,tipo_tarjeta,saldo,fecha,hora)
-	VALUES (id_tarjeta,tipo,saldo,curdate(),curtime());
+	VALUES (NEW.id_tarjeta,NEW.tipo,NEW.saldo,curdate(),curtime());
 
 END; !
 
@@ -338,3 +340,4 @@ GRANT SELECT, INSERT ON parquimetros.estacionamientos TO 'parquimetro'@'%';
 GRANT SELECT, INSERT ON parquimetros.tarjetas TO 'parquimetro'@'%';
 
 GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';
+

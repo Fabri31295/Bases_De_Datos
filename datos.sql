@@ -147,6 +147,8 @@ INSERT INTO parquimetros(id_parq,numero,calle,altura)
 VALUES(555,5,'calle5',298);
 INSERT INTO parquimetros(id_parq,numero,calle,altura)
 VALUES(666,6,'calle6',875);
+INSERT INTO parquimetros(id_parq,numero,calle,altura)
+VALUES(777,7,'calle6',875);
 
 # -----------------------------------------------------------------------------
 # ESTACIONAMIENTOS

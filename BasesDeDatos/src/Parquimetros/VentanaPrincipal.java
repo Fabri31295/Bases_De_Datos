@@ -19,6 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import java.awt.Font;
 
 @SuppressWarnings("serial")
 public class VentanaPrincipal extends javax.swing.JFrame {
@@ -54,7 +57,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		this.setBounds(100, 100, 300, 200);
+		this.setBounds(100, 100, 500, 200);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
@@ -67,11 +70,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				acceder();
 			}
 		});
-		btnAcceder.setBounds(98, 123, 100, 27);
+		btnAcceder.setBounds(65, 122, 100, 27);
 		getContentPane().add(btnAcceder);
 
 		JLabel lblAdmin = new JLabel("Usuario");
-		lblAdmin.setBounds(28, 24, 60, 20);
+		lblAdmin.setBounds(28, 44, 60, 20);
 		getContentPane().add(lblAdmin);
 
 		JLabel lblPassAdmin = new JLabel("Password");
@@ -79,13 +82,44 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		getContentPane().add(lblPassAdmin);
 
 		textUsuario = new JTextField();
-		textUsuario.setBounds(185, 24, 86, 20);
+		textUsuario.setBounds(120, 44, 86, 20);
 		getContentPane().add(textUsuario);
 		textUsuario.setColumns(10);
 
 		textPassword = new JPasswordField();
-		textPassword.setBounds(185, 75, 86, 20);
+		textPassword.setBounds(120, 75, 86, 20);
 		getContentPane().add(textPassword);
+		
+		JSeparator separator = new JSeparator();
+		separator.setOrientation(SwingConstants.VERTICAL);
+		separator.setBounds(250, 11, 12, 149);
+		getContentPane().add(separator);
+		
+		JButton btnConexion = new JButton("Conexion");
+		btnConexion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				VentanaParquimetro v = new VentanaParquimetro() {
+					public void dispose() {
+						getFrame().setVisible(true);
+						super.dispose();
+					}
+				};
+			}
+		});
+		btnConexion.setBounds(322, 65, 113, 40);
+		getContentPane().add(btnConexion);
+		
+		JLabel lblNewLabel = new JLabel("SECCION TARJETAS");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setFont(new Font("Tempus Sans ITC", Font.PLAIN, 16));
+		lblNewLabel.setBounds(250, 12, 250, 14);
+		getContentPane().add(lblNewLabel);
+		
+		JLabel lblSeccionUsuarios = new JLabel("SECCION USUARIOS");
+		lblSeccionUsuarios.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSeccionUsuarios.setFont(new Font("Tempus Sans ITC", Font.PLAIN, 16));
+		lblSeccionUsuarios.setBounds(0, 12, 250, 14);
+		getContentPane().add(lblSeccionUsuarios);
 	}
 	
 	
@@ -105,7 +139,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 			String user = textUsuario.getText();
 			String password = new String(textPassword.getPassword());
 			
-			if(user.equals("parquimetro")) {
+		/*	if(user.equals("parquimetro")) {
 				conexionBD = conectarBD("parquimetro",password);
 				if(conexionBD != null) {
 					VentanaParquimetro v = new VentanaParquimetro(conexionBD) {
@@ -120,9 +154,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				} else
 					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto","Error",0);
 			}else
-				
+				*/
 			if(user.equals("admin")) { // Si quiere acceder como administrador
-				conexionBD = conectarBD("admin",password);
+				conectarBD("admin",password);
 				if(conexionBD != null) {
 					VentanaConsultas v = new VentanaConsultas(conexionBD) {
 			            public void dispose(){
@@ -139,7 +173,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 			else 
 				if(!user.equals("") && !password.equals("")) {
 					
-					conexionBD = conectarBD("inspector", "inspector");
+					conectarBD("inspector", "inspector");
 					Statement stmt = conexionBD.createStatement();
 					
 					ResultSet rs = stmt.executeQuery("SELECT nombre, apellido FROM inspectores WHERE legajo = '"+user+"' AND password = md5('"+password+"')");
@@ -172,11 +206,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 	 * Abre la conexion a la base de datos con el usuario y la contraseña
 	 * que ingresa el usuario
 	 */
-	private Connection conectarBD(String user, String password) {
-		Connection c = null;
-		if (conexionBD == null) {
-			try {
-
+	private void conectarBD(String user, String password) {
+		try {
+			if (conexionBD == null) {
 				String servidor = "localhost:3306";
 				String baseDatos = "parquimetros";
 				String usuario = user;
@@ -184,13 +216,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
 						+ "?serverTimezone=America/Argentina/Buenos_Aires";
 
-				c =  DriverManager.getConnection(uriConexion, usuario, clave);
+				conexionBD =  DriverManager.getConnection(uriConexion, usuario, clave);
+			}
 
 			} catch (SQLException ex) {
 				//Error
 			}
-		}
-		return c;
+		
 	}
 
 	/*
