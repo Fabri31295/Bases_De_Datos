@@ -189,8 +189,8 @@ CREATE TABLE ventas (
   id_tarjeta INT UNSIGNED NOT NULL,
   tipo_tarjeta VARCHAR(30) NOT NULL,
   saldo DECIMAL(5,2) NOT NULL,
-  fecha DATE,
-  hora TIME,
+  fecha DATE NOT NULL,
+  hora TIME NOT NULL,
 
   CONSTRAINT pk_ventas
   PRIMARY KEY (id_tarjeta,fecha,hora),
@@ -270,30 +270,21 @@ delimiter ;*/
 
 # -----------------------------------------------------------------------------
 # Creacion de trigger
-/*
+
 delimiter !
 
 CREATE TRIGGER triggerVentas
-AFTER INSERT ON ventas
+AFTER INSERT ON tarjetas 
 FOR EACH ROW
 
 BEGIN
 
-DECLARE fecha DATE;
-DECLARE hora TIME;
-DECLARE tarjeta INT;
-DECLARE tipo CHAR(30);
-DECLARE saldo INT;
-
-SET fecha = CURDATE();
-SET hora = CURTIME();
-
-
-SELECT t.tipo_tarjeta INTO tarjeta FROM );
+	INSERT INTO ventas(id_tarjeta,tipo_tarjeta,saldo,fecha,hora)
+	VALUES (id_tarjeta,tipo,saldo,curdate(),curtime());
 
 END; !
 
-delimiter ;*/
+delimiter ;
 
 # -----------------------------------------------------------------------------
 # Creacion de usuario administrador
@@ -333,13 +324,17 @@ GRANT SELECT ON parquimetros.parquimetros TO 'inspector'@'%';
 GRANT SELECT ON parquimetros.automoviles TO 'inspector'@'%';
 
 # -----------------------------------------------------------------------------
-/*
+
 # Creacion de usuario parquimetro
 
 CREATE USER 'parquimetro'@'%' IDENTIFIED BY 'parq';
 
-GRANT EXECUTE ON PROCEDURE parquimetros.conectar TO parquimetro@'%';
+/*GRANT EXECUTE ON PROCEDURE parquimetros.conectar TO parquimetro@'%';*/
 
-GRANT SELECT ON parquimetros.parquimetros TO 'parquimetro'@'%';
+GRANT SELECT, INSERT ON parquimetros.parquimetros TO 'parquimetro'@'%';
 
-GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';*/
+GRANT SELECT, INSERT ON parquimetros.estacionamientos TO 'parquimetro'@'%';
+
+GRANT SELECT, INSERT ON parquimetros.tarjetas TO 'parquimetro'@'%';
+
+GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';
