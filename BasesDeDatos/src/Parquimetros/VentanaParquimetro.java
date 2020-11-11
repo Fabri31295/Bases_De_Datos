@@ -40,14 +40,13 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 	private JLabel labelTarjetas;
 	private JLabel labelUbicaciones;
 	private JLabel labelParquimetros;
-
 	protected Connection conexionBD = null;
 
 	/**
 	 * Create the application.
 	 */
-	public VentanaParquimetro() {
-		conectarBD("parquimetro", "parq");
+	public VentanaParquimetro(Connection c) {
+		conexionBD = c;
 		initialize();
 	}
 
@@ -79,12 +78,18 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		scroll_tarjetas.setViewportView(lista_tarjetas);
 
 		scroll_parquimetros = new JScrollPane();
-		scroll_parquimetros.setBounds(457, 164, 160, 86);
+		scroll_parquimetros.setBounds(457, 157, 160, 86);
 		getContentPane().add(scroll_parquimetros);
-
+		
 		lista_parquimetros = new JList<Object>();
 		scroll_parquimetros.setViewportView(lista_parquimetros);
-
+				
+		labelUbicaciones = new JLabel("Ubicaciones");
+		labelUbicaciones.setHorizontalAlignment(SwingConstants.CENTER);
+		labelUbicaciones.setFont(new Font("Tahoma", Font.BOLD, 14));
+		labelUbicaciones.setBounds(457, 19, 160, 20);
+		getContentPane().add(labelUbicaciones);	
+				
 		labelParquimetros = new JLabel("Parquimetros");
 		labelParquimetros.setHorizontalAlignment(SwingConstants.CENTER);
 		labelParquimetros.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -94,15 +99,27 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		labelTarjetas = new JLabel("Tarjetas");
 		labelTarjetas.setHorizontalAlignment(SwingConstants.CENTER);
 		labelTarjetas.setFont(new Font("Tahoma", Font.BOLD, 14));
-		labelTarjetas.setBounds(457, 248, 160, 20);
+		labelTarjetas.setBounds(455, 253, 160, 20);
 		getContentPane().add(labelTarjetas);
 
 		scroll_informacion = new JScrollPane();
-		scroll_informacion.setBounds(25, 24, 409, 398);
+		scroll_informacion.setBounds(26, 24, 409, 398);
 		getContentPane().add(scroll_informacion);
 
 		lista_info = new JList<Object>();
 		scroll_informacion.setViewportView(lista_info);
+		
+		JScrollPane scroll_ubicaciones = new JScrollPane();
+		scroll_ubicaciones.setBounds(457, 37, 160, 86);
+		getContentPane().add(scroll_ubicaciones);
+		
+		lista_ubicaciones = new JList<Object>();
+		scroll_ubicaciones.setViewportView(lista_ubicaciones);
+		lista_ubicaciones.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				obtenerParquimetrosAsociados();
+			}
+		});
 
 		model_parquimetros = new DefaultListModel<Object>();
 		model_ubicaciones = new DefaultListModel<Object>();
@@ -126,48 +143,23 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		btnConfirmar = new JButton("Confirmar");
 		btnConfirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				
+				/*
+				 * 
+				 * Zona en construccion
+				 * 
+				 */
+				
 				JOptionPane.showMessageDialog(null, "ACA VA LO DEL STORED PROCEDURE", "ERROR", 0);
 			}
 		});
 		btnConfirmar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnConfirmar.setBounds(457, 357, 160, 29);
+		btnConfirmar.setBounds(457, 357, 160, 20);
 		getContentPane().add(btnConfirmar);
-
-		JScrollPane scroll_ubicaciones = new JScrollPane();
-		scroll_ubicaciones.setBounds(457, 49, 160, 86);
-		getContentPane().add(scroll_ubicaciones);
-
-		lista_ubicaciones = new JList<Object>();
-		scroll_ubicaciones.setViewportView(lista_ubicaciones);
-		lista_ubicaciones.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				obtenerParquimetrosAsociados();
-			}
-		});
-
-		labelUbicaciones = new JLabel("Ubicaciones");
-		labelUbicaciones.setHorizontalAlignment(SwingConstants.CENTER);
-		labelUbicaciones.setFont(new Font("Tahoma", Font.BOLD, 14));
-		labelUbicaciones.setBounds(457, 26, 160, 20);
-		getContentPane().add(labelUbicaciones);
+		
 	}
-
-	/*
-	 * private void cargarTablas() { try { java.sql.Statement stat =
-	 * conexionBD.createStatement(); ResultSet res =
-	 * stat.executeQuery("SELECT calle,numero,altura FROM parquimetros");
-	 * while(res.next())
-	 * model_parquimetros.add(0,res.getString("calle")+" "+res.getString("altura"));
-	 * lista_parquimetros.setModel(model_parquimetros);
-	 * 
-	 * res = stat.executeQuery("SELECT id_tarjeta FROM tarjetas"); while(res.next())
-	 * model_tarjetas.add(0, res.getString("id_tarjeta"));
-	 * lista_tarjetas.setModel(model_tarjetas);
-	 * 
-	 * res.close();
-	 * 
-	 * } catch(SQLException e) { e.printStackTrace(); } }
-	 */
 
 	private void cargarUbicaciones() {
 		try {
@@ -181,7 +173,6 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 			lista_ubicaciones.setModel(model_ubicaciones);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -205,7 +196,6 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 			}
 			lista_parquimetros.setModel(model_parquimetros);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -222,33 +212,10 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 			lista_tarjetas.setModel(model_tarjetas);
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	 * Abre la conexion a la base de datos con el usuario y la contraseña que
-	 * ingresa el usuario
-	 */
-	private void conectarBD(String user, String password) {
-		try {
-			if (conexionBD == null) {
-				String servidor = "localhost:3306";
-				String baseDatos = "parquimetros";
-				String usuario = user;
-				String clave = password;
-				String uriConexion = "jdbc:mysql://" + servidor + "/" + baseDatos
-						+ "?serverTimezone=America/Argentina/Buenos_Aires";
-
-				conexionBD = DriverManager.getConnection(uriConexion, usuario, clave);
-			}
-
-		} catch (SQLException ex) {
-			// Error
-		}
-
-	}
+	
 
 	/*
 	 * Cierra la conexion a la base de datos

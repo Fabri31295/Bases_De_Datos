@@ -98,12 +98,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		JButton btnConexion = new JButton("Conexion");
 		btnConexion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				VentanaParquimetro v = new VentanaParquimetro() {
+				conectarBD("parquimetro","parq");
+				VentanaParquimetro v = new VentanaParquimetro(conexionBD) {
 					public void dispose() {
 						getFrame().setVisible(true);
 						super.dispose();
 					}
 				};
+				v.setVisible(true);
+				dispose();
 			}
 		});
 		btnConexion.setBounds(322, 65, 113, 40);
@@ -138,23 +141,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 		try {
 			String user = textUsuario.getText();
 			String password = new String(textPassword.getPassword());
-			
-		/*	if(user.equals("parquimetro")) {
-				conexionBD = conectarBD("parquimetro",password);
-				if(conexionBD != null) {
-					VentanaParquimetro v = new VentanaParquimetro(conexionBD) {
-						public void dispose() {
-							getFrame().setVisible(true);
-							super.dispose();
-							desconectarBD();
-						}
-					};
-					v.setVisible(true);
-					dispose();
-				} else
-					JOptionPane.showMessageDialog(null, "Usuario y/o contraseña incorrecto","Error",0);
-			}else
-				*/
 			if(user.equals("admin")) { // Si quiere acceder como administrador
 				conectarBD("admin",password);
 				if(conexionBD != null) {
