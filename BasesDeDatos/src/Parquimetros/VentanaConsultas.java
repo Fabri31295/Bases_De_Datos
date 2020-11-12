@@ -142,7 +142,7 @@ public class VentanaConsultas extends javax.swing.JFrame {
 		btnCerrarSesion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				desconectarBD();
-				setVisible(false);
+				//setVisible(false);
 				limpiarVentanaConsultas();
 				dispose();
 			}

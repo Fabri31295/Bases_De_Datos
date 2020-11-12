@@ -7,6 +7,7 @@ package Parquimetros;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -103,6 +104,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 					public void dispose() {
 						getFrame().setVisible(true);
 						super.dispose();
+						desconectarBD();
 					}
 				};
 				v.setVisible(true);

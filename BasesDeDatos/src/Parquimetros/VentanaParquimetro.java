@@ -93,13 +93,13 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		labelParquimetros = new JLabel("Parquimetros");
 		labelParquimetros.setHorizontalAlignment(SwingConstants.CENTER);
 		labelParquimetros.setFont(new Font("Tahoma", Font.BOLD, 14));
-		labelParquimetros.setBounds(457, 138, 160, 20);
+		labelParquimetros.setBounds(457, 134, 160, 20);
 		getContentPane().add(labelParquimetros);
 
 		labelTarjetas = new JLabel("Tarjetas");
 		labelTarjetas.setHorizontalAlignment(SwingConstants.CENTER);
 		labelTarjetas.setFont(new Font("Tahoma", Font.BOLD, 14));
-		labelTarjetas.setBounds(455, 253, 160, 20);
+		labelTarjetas.setBounds(457, 251, 160, 20);
 		getContentPane().add(labelTarjetas);
 
 		scroll_informacion = new JScrollPane();
@@ -156,7 +156,7 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 			}
 		});
 		btnConfirmar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnConfirmar.setBounds(457, 357, 160, 20);
+		btnConfirmar.setBounds(457, 362, 160, 20);
 		getContentPane().add(btnConfirmar);
 		
 	}
