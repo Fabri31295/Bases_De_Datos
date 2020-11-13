@@ -7,7 +7,6 @@ package Parquimetros;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.sql.Connection;

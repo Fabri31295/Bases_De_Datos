@@ -6,17 +6,16 @@ package Parquimetros;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -26,7 +25,6 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.MaskFormatter;
 
 @SuppressWarnings("serial")
 public class VentanaInspector extends javax.swing.JFrame{
@@ -49,12 +47,11 @@ public class VentanaInspector extends javax.swing.JFrame{
 	private JTextPane informacion;
 	private JButton set_patente,remove_patente;
 	private JButton confirmar,cerrar_sesion;
-	private JFormattedTextField ingreso_patente;
+	private TextField ingreso_patente;
 	private JLabel txt_patente,txt_parquimetros;
 	private JLabel txt_multas,txt_info,txt_error;
 	private Fecha date;
 	private String legajo;		
-	private MaskFormatter mask;
 	
 	public VentanaInspector(Connection c,String leg) {
 		super();
@@ -107,12 +104,8 @@ public class VentanaInspector extends javax.swing.JFrame{
 		informacion.setBorder(border);
 		informacion.setEditable(false);
 		getContentPane().add(informacion);
-		try {
-			mask = new MaskFormatter("LLL###");
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		ingreso_patente = new JFormattedTextField(mask);
+		
+		ingreso_patente = new TextField();
 		ingreso_patente.setBounds(462, 35, 150, 30);
 		getContentPane().add(ingreso_patente);
 		
@@ -165,7 +158,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 		scroll_multas.setViewportView(table);
 	}
 	
-	
 	/*
 	 * Genera los botones que se muestran por interfaz y les da funcionalidad.
 	 */
@@ -176,7 +168,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		set_patente.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String ingresada = ingreso_patente.getText();
-				if(ingresada.length() == 6) {
+				if(validarPatente(ingresada)) {
 						if(getPosicion(ingreso_patente.getText()) == -1) {
 								model_patentes.add(0,ingresada);
 								lista_patentes.setModel(model_patentes);
@@ -201,16 +193,19 @@ public class VentanaInspector extends javax.swing.JFrame{
 					else 
 						seleccion = ingreso_patente.getText();
 					
-					if(getPosicion(seleccion) != -1) 
-						if(model_patentes.size() == 1)
-							model_patentes.removeAllElements();
-						else {
-							model_patentes.remove(getPosicion(seleccion));
-							ingreso_patente.setText("");
-						}		
-					else
-						JOptionPane.showMessageDialog(null, "La patente ingresada no se encuentra en la lista","Error", JOptionPane.ERROR_MESSAGE);
-					
+					if(validarPatente(seleccion)) {
+						if (getPosicion(seleccion) != -1) {
+							if(model_patentes.size() == 1)
+								model_patentes.removeAllElements();
+							else {
+								model_patentes.remove(getPosicion(seleccion));
+								ingreso_patente.setText("");
+							}		
+						} else
+							JOptionPane.showMessageDialog(null, "La patente ingresada no se encuentra en la lista","Error", JOptionPane.ERROR_MESSAGE);
+							
+					}else
+						JOptionPane.showMessageDialog(null, "Patente invalida","Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -221,7 +216,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 			public void actionPerformed(ActionEvent e) {
 				if(lista_parquimetros.getSelectedValue() != null) {
 						date = new Fecha();
-						almacenarPatentes();
 						conexionParquimetro();
 				}
 			}	
@@ -241,7 +235,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 		getContentPane().add(confirmar);
 		getContentPane().add(cerrar_sesion);
 	}
-	
 	
 	/* 
 	 * Carga los parquimetros de la base de datos para mostrarlos en la interfaz
@@ -264,8 +257,7 @@ public class VentanaInspector extends javax.swing.JFrame{
            System.out.println("VendorError: " + e.getErrorCode());
 		}
 	}
-	
-	
+		
 	/*
 	 * Guarda las patentes ingresadas por el usuario en un ArrayList y 
 	 * controla que pertenezcan a la base de datos
@@ -289,21 +281,17 @@ public class VentanaInspector extends javax.swing.JFrame{
 			ex.printStackTrace();
 		}
 	}
-
-	
 	
 	/* 
 	 *  Simula la conexion de la unidad al parquimetro seleccionado
 	 */
-	private void conexionParquimetro(){
-		
-		try {			
-			
+	private void conexionParquimetro(){		
+		try {						
 			informacion.setText("Registrando el acceso del inspector al parquímetro...");
 			String txt = (String) lista_parquimetros.getSelectedValue();
 			String[] parts = txt.split(" "); // obtengo calle y altura por separado 
 			String id_asociado = asociado(parts[0],parts[1]);
-			
+			almacenarPatentes();
 			if(id_asociado != null) {
 				informacion.setText(informacion.getText()+"\n\nRegistrado correctamente!");
 				if(!model_patentes.isEmpty()) {
@@ -366,24 +354,26 @@ public class VentanaInspector extends javax.swing.JFrame{
 	}
 	
 	/* 
-	 * Se encarga de generar las multas para las patentes pertenecientes a la base de datos 
-	 * que no posean un estacionamiento abierto
+	 * Se encarga de generar las multas para las patentes pertenecientes a la base de datos que no posean un estacionamiento abierto en el 
+	 * parquimetro seleccionado
+	 * 
 	 */
 	private void generarMultas(String calle,String altura,String id_asociado) {
 
 		try {
 			
 			java.sql.Statement stat = conexionBD.createStatement();
-			ResultSet res = stat.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = '" + altura+"';");			
+			ResultSet res = stat.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = '" + altura+"' AND  fecha_sal = NULL AND hora_sal = NULL;");			
 			
-			while(res.next()){
+			// removemos de la lista ingresada a aquellas patentes que tengan estacionamiento abierto en esta ubicacion
+			while(res.next()){ 	
 				if(patentes.contains(res.getString("patente"))){
 					patentes.remove(res.getString("patente"));
 				}
 			}
 			res.close();
 			
-			// Para las patentes que no tienen estacionamientos abiertos se les hace una multa
+				// Para las patentes que no tienen estacionamientos abiertos en la ubicacion seleccionada se les hace una multa
 				if(patentes.size() > 0) {
 				
 					// Busco el ultimo numero de multa 
@@ -477,6 +467,27 @@ public class VentanaInspector extends javax.swing.JFrame{
 	 */
 	private void limpiarPatentes() {
 		model_patentes.removeAllElements();
+	}
+	
+	/* Controla que la patente ingresada sea de la forma LLL###*/
+	private boolean validarPatente(String patente) {
+		char a,b,c,d,e,f;
+		if(patente.length() != 6)
+			return false;
+		else {
+			a = patente.charAt(0);
+			b = patente.charAt(1);
+			c = patente.charAt(2);
+			d = patente.charAt(3);
+			e = patente.charAt(4);
+			f = patente.charAt(5);
+			if(!Character.isLetter(a) || !Character.isLetter(b) || !Character.isLetter(c))
+				return false;
+			else
+				if(!Character.isDigit(d) || !Character.isDigit(e) || !Character.isDigit(f))
+						return false;
+		}
+		return true;
 	}
 	
 	/*
