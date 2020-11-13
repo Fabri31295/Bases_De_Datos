@@ -154,33 +154,33 @@ VALUES(777,7,'calle6',875);
 # ESTACIONAMIENTOS
 
 INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('02-09-20','17:00:00',NULL,NULL,9876,111);
+VALUES('2020-09-02','17:00:00',NULL,NULL,9876,111);
 INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('03-12-12','12:00:00',NULL,NULL,1234,222);
+VALUES('2012-12-03','12:00:00',NULL,NULL,1234,222);
 INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('06-10-10','09:00:00',NULL,NULL,4567,333);
+VALUES('2010-10-06','09:00:00',NULL,NULL,4567,333);
 INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('02-08-20','18:00:00',NULL,NULL,8745,444);
+VALUES('2020-08-02','18:00:00',NULL,NULL,8745,444);
 INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('03-04-20','22:00:00',NULL,NULL,2354,555);
+VALUES('2020-04-03','22:00:00',NULL,NULL,2354,555);
 INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('02-08-18','10:00:00',NULL,NULL,9658,666);
+VALUES('2018-08-02','10:00:00',NULL,NULL,9658,666);
 
 # -----------------------------------------------------------------------------
 # ACCEDE
 
 INSERT INTO accede(legajo,id_parq,fecha,hora)
-VALUES(101,111,'02-08-20','19:00:00');
+VALUES(101,111,'2016-08-02','19:00:00');
 INSERT INTO accede(legajo,id_parq,fecha,hora)
-VALUES(102,222,'01-07-15','20:00:00');
+VALUES(102,222,'2001-07-01','20:00:00');
 INSERT INTO accede(legajo,id_parq,fecha,hora)
-VALUES(103,333,'02-03-16','22:00:00');
+VALUES(103,333,'2002-03-02','22:00:00');
 INSERT INTO accede(legajo,id_parq,fecha,hora)
-VALUES(104,444,'09-04-17','07:00:00');
+VALUES(104,444,'2009-04-09','07:00:00');
 INSERT INTO accede(legajo,id_parq,fecha,hora)
-VALUES(105,555,'23-02-18','09:00:00');
+VALUES(105,555,'2011-02-23','09:00:00');
 INSERT INTO accede(legajo,id_parq,fecha,hora)
-VALUES(106,666,'21-05-20','11:00:00');
+VALUES(106,666,'2020-05-21','11:00:00');
 
 # -----------------------------------------------------------------------------
 # ASOCIADO_CON
@@ -202,13 +202,13 @@ VALUES(106,1006,dia(CONCAT(YEAR(DATE_ADD(NOW(), INTERVAL 1 YEAR)),'-02-08')),'T'
 # MULTA
 
 INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
-VALUES(1,'02-08-20','19:00:00','abc123',1001);
+VALUES(1,'2020-08-20','19:00:00','abc123',1001);
 INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
-VALUES(2,'03-09-10','11:00:00','brw793',1002);
+VALUES(2,'2019-09-10','11:00:00','brw793',1002);
 INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
-VALUES(3,'22-08-12','20:00:00','jod800',1003);
+VALUES(3,'2017-08-12','20:00:00','jod800',1003);
 INSERT INTO multa(numero,fecha,hora,patente,id_asociado_con)
-VALUES(4,'23-08-17','22:00:00','sie098',1004);
+VALUES(4,'2016-08-17','22:00:00','sie098',1004);
 
 #-----------------------------------------------------------------------------
 

@@ -255,19 +255,19 @@ Start TRANSACTION;
 							SELECT e.id_parq INTO parq FROM estacionamientos as e WHERE e.id_tarjeta = id_tarjeta AND e.fecha_sal IS NULL AND e.hora_sal IS NULL LOCK IN SHARE MODE;
 							SELECT u.tarifa INTO tarifa FROM ubicaciones as u NATURAL JOIN parquimetros as p WHERE parq=p.id_parq;
 							SELECT TRUNCATE((TIME_TO_SEC(TIMEDIFF(now(),CONCAT(e.fecha_ent,' ',e.hora_ent)))/60), 2) INTO minutos FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL;
-							SET saldo_nuevo = TRUNCATE((saldo-(minutos*tarifa*(1-descuento))),2);					
+							SET new_saldo = TRUNCATE((saldo-(minutos*tarifa*(1-descuento))),2);					
 							
 							UPDATE estacionamientos as e SET e.fecha_sal=now(), e.hora_sal=now() WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL; 
 							
-							IF (saldo_nuevo < -999.99) THEN
+							IF (new_saldo < -999.99) THEN
 								BEGIN
 									UPDATE tarjetas as t SET t.saldo = '-999.99' WHERE t.id_tarjeta=id_tarjeta;
 									SELECT 'Cierre' as Operacion, TRUNCATE (minutos,2) as 'Tiempo Transcurrido (min.)', '-999.99' as 'Saldo Actualizado';
 								END;
 							ELSE	
 								BEGIN
-									UPDATE tarjetas AS t SET t.saldo=saldo_nuevo WHERE t.id_tarjeta=id_tarjeta;
-									SELECT 'Cierre' AS Operacion, TRUNCATE (minutos,2) as 'Tiempo Transcurrido (MIN)', saldo_nuevo as 'Saldo Actualizado';
+									UPDATE tarjetas AS t SET t.saldo=new_saldo WHERE t.id_tarjeta=id_tarjeta;
+									SELECT 'Cierre' AS Operacion, TRUNCATE (minutos,2) as 'Tiempo Transcurrido (MIN)', new_saldo as 'Saldo Actualizado';
 								END;
 							END IF;	
 						END;
@@ -376,6 +376,4 @@ GRANT SELECT, INSERT ON parquimetros.estacionamientos TO 'parquimetro'@'%';
 GRANT SELECT, INSERT ON parquimetros.tarjetas TO 'parquimetro'@'%';
 
 GRANT SELECT ON parquimetros.tarjetas TO 'parquimetro'@'%';
-
-GRANT SELECT ON mysql.proc TO 'parquimetro'@'%';
 
