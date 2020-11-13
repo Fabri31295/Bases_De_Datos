@@ -314,31 +314,21 @@ public class VentanaInspector extends javax.swing.JFrame{
 	 * Retorna el id_asociado_con en caso de estar asociado
 	 * */
 	private String asociado(String calle,String altura) {	
-		boolean encontre = false;
+		boolean ubi_correcta = false;
 		String salida;
 		try {			
 			java.sql.Statement stat = conexionBD.createStatement();
 			
-			ResultSet res = stat.executeQuery("SELECT id_asociado_con,legajo,calle,altura,dia,turno FROM asociado_con");			
-			
+			ResultSet res = stat.executeQuery("SELECT id_asociado_con,dia,turno FROM asociado_con WHERE legajo = '"+legajo+"' AND calle = '"+calle+"' AND altura = '"+altura+"';");			
 			while(res.next()){
-				if(calle.equals(res.getString("calle")) && altura.equals(res.getString("altura")) && legajo.equals(res.getString("legajo"))) {
-
+					ubi_correcta = true;
 					// si el parquimetro esta asociado con el inspector, controlo el dia y turno
-					if(res.getString("dia").equals(date.getDia())) {
-						if(res.getString("turno").equals(date.getTurno())) {
+					if(res.getString("dia").equals(date.getDia()) && res.getString("turno").equals(date.getTurno())) {
 							salida = res.getString("id_asociado_con");
 							res.close();
 							return salida;
-						}else {	
-							encontre = true;
-							JOptionPane.showMessageDialog(null, "No autorizado para labrar multas en este horario", "ERROR", 0);						
-						}
-					}else {
-						encontre = true;
-						JOptionPane.showMessageDialog(null, "No autorizado para labrar multas en este día", "ERROR", 0);	
 					}
-				}
+				
 			}	
 			res.close();
 		} catch (SQLException e){
@@ -347,8 +337,10 @@ public class VentanaInspector extends javax.swing.JFrame{
             System.out.println("VendorError: " + e.getErrorCode());
 		}	
 		
-		if(!encontre)
+		if(!ubi_correcta)
 			JOptionPane.showMessageDialog(null, "No autorizado para labrar multas en esa ubicacion", "ERROR", 0);
+		else
+			JOptionPane.showMessageDialog(null, "No autorizado para labrar multas en este día u horario", "ERROR", 0);
 
 		return null;
 	}
@@ -363,7 +355,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		try {
 			
 			java.sql.Statement stat = conexionBD.createStatement();
-			ResultSet res = stat.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = '" + altura+"' AND  fecha_sal = NULL AND hora_sal = NULL;");			
+			ResultSet res = stat.executeQuery("SELECT patente FROM estacionados WHERE calle = '" + calle + "' AND altura = '" + altura+"';");			
 			
 			// removemos de la lista ingresada a aquellas patentes que tengan estacionamiento abierto en esta ubicacion
 			while(res.next()){ 	
