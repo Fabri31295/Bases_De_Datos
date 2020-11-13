@@ -136,12 +136,13 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		btnConfirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					String parq = (String) lista_parquimetros.getSelectedValue();
+					int parq = Integer.parseInt((String) lista_parquimetros.getSelectedValue());
+					String idParq = obtenerIDParquimetro(parq);
 					String tarj = (String) lista_tarjetas.getSelectedValue();
-					if(parq != null && tarj != null) {
+					if(idParq != null && tarj != null) {
 						cs = (CallableStatement) conexionBD.prepareCall("{call conectar(?,?)}");
 						cs.setString(1,tarj);
-						cs.setString(2,parq);	
+						cs.setString(2,idParq);	
 						storeprocedure(cs);
 					}
 				} catch (SQLException e) {
@@ -197,19 +198,36 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 			String[] words = ubicacionSeleccionada.split(" ", 2);
 			String calle = words[0];
 			String altura = words[1];
-			String sql = "SELECT id_parq FROM parquimetros WHERE calle = '" + calle + "' AND altura = '" + altura + "'";
+			String sql = "SELECT numero FROM parquimetros WHERE calle = '" + calle + "' AND altura = '" + altura + "'";
 
 			Statement stmt = this.conexionBD.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			model_parquimetros.removeAllElements();
 			while (rs.next()) {
-				model_parquimetros.add(0, rs.getString("id_parq"));
+				model_parquimetros.add(0, rs.getString("numero"));
 			}
 			lista_parquimetros.setModel(model_parquimetros);
+			rs.close();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private String obtenerIDParquimetro(int numero) {
+		String id =null;
+		try {
+			String sql = "SELECT id_parq FROM parquimetros WHERE numero = '"+ numero +"'"; 
+			
+			Statement stmt = this.conexionBD.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next())
+				id = rs.getString("id_parq");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return id;
 	}
 
 	private void cargarTarjetas() {
