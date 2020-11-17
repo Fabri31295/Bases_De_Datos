@@ -98,7 +98,7 @@ VALUES(8745,78.05,'t3','sie098');
 INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
 VALUES(2354,206.35,'t4','jhg890');
 INSERT INTO tarjetas(id_tarjeta,saldo,tipo,patente)
-VALUES(9658,989.99,'t3','rft543');
+VALUES(9658,500,'t3','rft543');
 
 # -----------------------------------------------------------------------------
 # INSPECTORES
@@ -147,24 +147,10 @@ INSERT INTO parquimetros(id_parq,numero,calle,altura)
 VALUES(555,5,'calle5',298);
 INSERT INTO parquimetros(id_parq,numero,calle,altura)
 VALUES(666,6,'calle6',875);
-INSERT INTO parquimetros(id_parq,numero,calle,altura)
-VALUES(777,7,'calle6',875);
 
 # -----------------------------------------------------------------------------
 # ESTACIONAMIENTOS
 
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('2020-09-02','17:00:00',NULL,NULL,9876,111);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('2012-12-03','12:00:00',NULL,NULL,1234,222);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('2010-10-06','09:00:00',NULL,NULL,4567,333);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('2020-08-02','18:00:00',NULL,NULL,8745,444);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('2020-04-03','22:00:00',NULL,NULL,2354,555);
-INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
-VALUES('2018-08-02','10:00:00',NULL,NULL,9658,666);
 
 # -----------------------------------------------------------------------------
 # ACCEDE

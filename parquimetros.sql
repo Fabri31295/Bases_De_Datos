@@ -253,11 +253,13 @@ Start TRANSACTION;
 
 							SELECT t.saldo INTO saldo FROM tarjetas as t WHERE id_tarjeta=t.id_tarjeta FOR UPDATE;
 							SELECT e.id_parq INTO parq FROM estacionamientos as e WHERE e.id_tarjeta = id_tarjeta AND e.fecha_sal IS NULL AND e.hora_sal IS NULL LOCK IN SHARE MODE;
-							SELECT u.tarifa INTO tarifa FROM ubicaciones as u NATURAL JOIN parquimetros as p WHERE parq=p.id_parq;
-							SELECT TRUNCATE((TIME_TO_SEC(TIMEDIFF(now(),CONCAT(e.fecha_ent,' ',e.hora_ent)))/60), 2) INTO minutos FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL;
-							SET new_saldo = TRUNCATE((saldo-(minutos*tarifa*(1-descuento))),2);					
+              SELECT u.tarifa INTO tarifa FROM ubicaciones as u NATURAL JOIN parquimetros as p WHERE parq = p.id_parq;
+
+							SELECT TRUNCATE((TIME_TO_SEC(TIMEDIFF(CONCAT(CURDATE(),' ',CURTIME()),CONCAT(e.fecha_ent,' ',e.hora_ent)))/60), 2) INTO minutos FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL;						
+              
+              SET new_saldo = TRUNCATE((saldo-(minutos*tarifa*(1-descuento))),2);					
 							
-							UPDATE estacionamientos as e SET e.fecha_sal=now(), e.hora_sal=now() WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL; 
+							UPDATE estacionamientos as e SET e.fecha_sal = CURDATE(), e.hora_sal = CURTIME() WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL; 
 							
 							IF (new_saldo < -999.99) THEN
 								BEGIN
@@ -274,12 +276,12 @@ Start TRANSACTION;
 					ELSE
 						BEGIN
 
-							SELECT t.saldo INTO saldo FROM tarjetas as t WHERE id_tarjeta=t.id_tarjeta;
+							SELECT t.saldo INTO saldo FROM tarjetas as t WHERE id_tarjeta = t.id_tarjeta;
 							SELECT u.tarifa INTO tarifa FROM ubicaciones as u NATURAL JOIN parquimetros p WHERE id_parq = p.id_parq LOCK IN SHARE MODE;
 
 							IF (saldo > 0) THEN
 								BEGIN
-									INSERT INTO estacionamientos (id_tarjeta,id_parq,fecha_ent,hora_ent) VALUES (id_tarjeta, id_parq, now(), now());
+									INSERT INTO estacionamientos (id_tarjeta,id_parq,fecha_ent,hora_ent,fecha_sal,hora_sal) VALUES (id_tarjeta, id_parq,CURDATE(),CURTIME(),NULL,NULL);
 									SELECT 'Apertura' as Operacion, 'Exito' as Resultado, TRUNCATE ((saldo/(tarifa*(1-descuento))),2) AS 'Tiempo disponible (min.)';	
 								END;
 							ELSE
@@ -317,7 +319,7 @@ CREATE TRIGGER triggerVentas AFTER INSERT ON tarjetas FOR EACH ROW
 
 BEGIN
 
-	INSERT INTO ventas VALUES (NEW.id_tarjeta,NEW.tipo,NEW.saldo,now(),now());
+	INSERT INTO ventas VALUES (NEW.id_tarjeta,NEW.tipo,NEW.saldo,CURDATE(),CURTIME());
 
 END; !
 
