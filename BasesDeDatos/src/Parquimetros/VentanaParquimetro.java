@@ -7,6 +7,7 @@ import java.sql.Statement;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -39,7 +40,6 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 	private JLabel labelParquimetros;
 	private CallableStatement cs;
 	protected Connection conexionBD = null;
-	
 
 	/**
 	 * Create the application.
@@ -78,16 +78,16 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		scroll_parquimetros = new JScrollPane();
 		scroll_parquimetros.setBounds(457, 157, 160, 86);
 		getContentPane().add(scroll_parquimetros);
-		
+
 		lista_parquimetros = new JList<Object>();
 		scroll_parquimetros.setViewportView(lista_parquimetros);
-				
+
 		labelUbicaciones = new JLabel("Ubicaciones");
 		labelUbicaciones.setHorizontalAlignment(SwingConstants.CENTER);
 		labelUbicaciones.setFont(new Font("Tahoma", Font.BOLD, 14));
 		labelUbicaciones.setBounds(457, 19, 160, 20);
-		getContentPane().add(labelUbicaciones);	
-				
+		getContentPane().add(labelUbicaciones);
+
 		labelParquimetros = new JLabel("Parquimetros");
 		labelParquimetros.setHorizontalAlignment(SwingConstants.CENTER);
 		labelParquimetros.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -101,13 +101,14 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		getContentPane().add(labelTarjetas);
 
 		textPane = new JTextPane();
+		textPane.setEditable(false);
 		textPane.setBounds(22, 37, 413, 392);
 		getContentPane().add(textPane);
-		
+
 		JScrollPane scroll_ubicaciones = new JScrollPane();
 		scroll_ubicaciones.setBounds(457, 37, 160, 86);
 		getContentPane().add(scroll_ubicaciones);
-		
+
 		lista_ubicaciones = new JList<Object>();
 		scroll_ubicaciones.setViewportView(lista_ubicaciones);
 		lista_ubicaciones.addMouseListener(new MouseAdapter() {
@@ -136,14 +137,22 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		btnConfirmar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					int parq = Integer.parseInt((String) lista_parquimetros.getSelectedValue());
-					String idParq = obtenerIDParquimetro(parq);
-					String tarj = (String) lista_tarjetas.getSelectedValue();
-					if(idParq != null && tarj != null) {
-						cs = (CallableStatement) conexionBD.prepareCall("{call conectar(?,?)}");
-						cs.setString(1,tarj);
-						cs.setString(2,idParq);	
-						storeprocedure(cs);
+					if (lista_parquimetros.getSelectedValue() == null || lista_parquimetros.getSelectedValue() == null
+							|| lista_parquimetros.getSelectedValue() == null) 
+						JOptionPane.showMessageDialog(null, "Seleccione una ubicacion, un parquimetro y una tarjeta", "ERROR", 0);
+					else {
+						int parq = Integer.parseInt((String) lista_parquimetros.getSelectedValue());
+						String idParq = obtenerIDParquimetro(parq);
+						String tarj = (String) lista_tarjetas.getSelectedValue();
+						if (idParq != null && tarj != null) {
+							cs = (CallableStatement) conexionBD.prepareCall("{call conectar(?,?)}");
+							cs.setString(1, tarj);
+							cs.setString(2, idParq);
+							storeprocedure(cs);
+							lista_parquimetros.clearSelection();
+							lista_ubicaciones.clearSelection();
+							lista_tarjetas.clearSelection();
+						}
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -152,27 +161,27 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		});
 		btnConfirmar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnConfirmar.setBounds(457, 362, 160, 20);
-		
+
 		getContentPane().add(btnConfirmar);
 		getContentPane().add(btnCerrar);
 	}
-	
+
 	private void storeprocedure(CallableStatement cs) {
 		String s = "";
 		try {
 			ResultSet rs = cs.executeQuery();
 			ResultSetMetaData rsmd = (ResultSetMetaData) rs.getMetaData();
 			int col = rsmd.getColumnCount();
-			while(rs.next()) {
+			while (rs.next()) {
 				for (int i = 1; i <= col; i++) {
-			        String columnValue = rs.getString(i);
-			        s += rsmd.getColumnName(i)+": "+columnValue+"\n";
-			    }
+					String columnValue = rs.getString(i);
+					s += rsmd.getColumnName(i) + ": " + columnValue + "\n";
+				}
 				s += " ";
 			}
 			textPane.setText(s);
-			
-		} catch(SQLException e) {
+
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -208,20 +217,20 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 			}
 			lista_parquimetros.setModel(model_parquimetros);
 			rs.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String obtenerIDParquimetro(int numero) {
-		String id =null;
+		String id = null;
 		try {
-			String sql = "SELECT id_parq FROM parquimetros WHERE numero = '"+ numero +"'"; 
-			
+			String sql = "SELECT id_parq FROM parquimetros WHERE numero = '" + numero + "'";
+
 			Statement stmt = this.conexionBD.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
-			if(rs.next())
+			if (rs.next())
 				id = rs.getString("id_parq");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -245,7 +254,7 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * Cierra la conexion a la base de datos
 	 */
@@ -262,4 +271,3 @@ public class VentanaParquimetro extends javax.swing.JFrame {
 		}
 	}
 }
-
