@@ -217,7 +217,7 @@ FROM ubicaciones AS ub JOIN parquimetros AS pq JOIN estacionamientos AS es JOIN 
 WHERE es.hora_ent is not NULL AND es.fecha_ent is not NULL AND es.hora_sal is NULL AND es.fecha_sal is NULL;
 
 # -----------------------------------------------------------------------------
-# Creacion de Stored Procedures
+/* Stored Procedure */
 
 delimiter !
 CREATE PROCEDURE conectar (IN id_tarjeta INTEGER, IN id_parq INTEGER)
@@ -241,39 +241,35 @@ BEGIN #En caso de una excepción SQLEXCEPTION retrocede la transacción y devuel
 END;
 
 Start TRANSACTION;
-	#Verificar que exita el parquimetro o la tarjeta
+	/* Verificamos que exita el parquimetro o la tarjeta */
 	IF EXISTS (SELECT p.id_parq FROM parquimetros as p WHERE id_parq=p.id_parq) THEN
 		BEGIN
 			IF EXISTS (SELECT t.id_tarjeta FROM tarjetas as t WHERE id_tarjeta=t.id_tarjeta) THEN
 				BEGIN
 					SELECT c.descuento INTO descuento FROM tarjetas t NATURAL JOIN tipos_tarjeta as c WHERE id_tarjeta=t.id_tarjeta LOCK IN SHARE MODE;	
 					
-					IF EXISTS (SELECT * FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND e.fecha_sal is NULL AND e.hora_sal is NULL ORDER BY fecha_ent,hora_ent DESC LIMIT 1 FOR UPDATE) THEN
+          /* Si tiene estacionamiento abierto ---> Cierre */
+					IF EXISTS (SELECT * FROM estacionamientos as e WHERE id_tarjeta = e.id_tarjeta AND e.fecha_sal is NULL AND e.hora_sal is NULL ORDER BY fecha_ent,hora_ent DESC LIMIT 1 FOR UPDATE) THEN
 						BEGIN 
 
 							SELECT t.saldo INTO saldo FROM tarjetas as t WHERE id_tarjeta=t.id_tarjeta FOR UPDATE;
 							SELECT e.id_parq INTO parq FROM estacionamientos as e WHERE e.id_tarjeta = id_tarjeta AND e.fecha_sal IS NULL AND e.hora_sal IS NULL LOCK IN SHARE MODE;
               SELECT u.tarifa INTO tarifa FROM ubicaciones as u NATURAL JOIN parquimetros as p WHERE parq = p.id_parq;
 
+              /* Minutos transcurridos durante el estacionamiento */
 							SELECT TRUNCATE((TIME_TO_SEC(TIMEDIFF(CONCAT(CURDATE(),' ',CURTIME()),CONCAT(e.fecha_ent,' ',e.hora_ent)))/60), 2) INTO minutos FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL;						
               
               SET new_saldo = TRUNCATE((saldo-(minutos*tarifa*(1-descuento))),2);					
 							
 							UPDATE estacionamientos as e SET e.fecha_sal = CURDATE(), e.hora_sal = CURTIME() WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL; 
-							
-							IF (new_saldo < -999.99) THEN
-								BEGIN
-									UPDATE tarjetas as t SET t.saldo = '-999.99' WHERE t.id_tarjeta=id_tarjeta;
-									SELECT 'Cierre' as Operacion, TRUNCATE (minutos,2) as 'Tiempo Transcurrido (min.)', '-999.99' as 'Saldo Actualizado';
-								END;
-							ELSE	
-								BEGIN
-									UPDATE tarjetas AS t SET t.saldo=new_saldo WHERE t.id_tarjeta=id_tarjeta;
-									SELECT 'Cierre' AS Operacion, TRUNCATE (minutos,2) as 'Tiempo Transcurrido (MIN)', new_saldo as 'Saldo Actualizado';
-								END;
-							END IF;	
+								
+							BEGIN
+								UPDATE tarjetas AS t SET t.saldo = new_saldo WHERE t.id_tarjeta=id_tarjeta;
+								SELECT 'Cierre' AS Operacion, TRUNCATE (minutos,2) as 'Tiempo transcurrido (min)', new_saldo as 'Saldo Actualizado';
+							END;
+
 						END;
-					ELSE
+					ELSE /* Si no tiene estacionamiento abierto ---> Apertura (Si tiene saldo > 0)*/
 						BEGIN
 
 							SELECT t.saldo INTO saldo FROM tarjetas as t WHERE id_tarjeta = t.id_tarjeta;
@@ -282,7 +278,7 @@ Start TRANSACTION;
 							IF (saldo > 0) THEN
 								BEGIN
 									INSERT INTO estacionamientos (id_tarjeta,id_parq,fecha_ent,hora_ent,fecha_sal,hora_sal) VALUES (id_tarjeta, id_parq,CURDATE(),CURTIME(),NULL,NULL);
-									SELECT 'Apertura' as Operacion, 'Exito' as Resultado, TRUNCATE ((saldo/(tarifa*(1-descuento))),2) AS 'Tiempo disponible (min.)';	
+									SELECT 'Apertura' as Operacion, 'Exito' as Resultado, TRUNCATE ((saldo/(tarifa*(1-descuento))),2) AS 'Tiempo disponible (min)';	
 								END;
 							ELSE
 								BEGIN
@@ -295,13 +291,13 @@ Start TRANSACTION;
 				END;
 			ELSE
 				BEGIN
-					SELECT 'Error' as Resultado, 'id_tarjeta inexistente' as Motivo;
+					SELECT 'Error' as Resultado, 'no existe el id_tarjeta' as Motivo;
 				END;				
 			END IF;
 		END;
 	ELSE
 		BEGIN
-			SELECT 'Error' as Resultado, 'id_parq inexistente' as Motivo;
+			SELECT 'Error' as Resultado, 'no existe el id_parq' as Motivo;
 		END;
 	END IF;
 COMMIT;
@@ -315,7 +311,9 @@ delimiter ;
 
 delimiter !
 
-CREATE TRIGGER triggerVentas AFTER INSERT ON tarjetas FOR EACH ROW
+CREATE TRIGGER triggerVentas 
+AFTER INSERT ON tarjetas 
+FOR EACH ROW
 
 BEGIN
 

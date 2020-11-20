@@ -12,10 +12,12 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -25,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextPane;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.MaskFormatter;
 
 @SuppressWarnings("serial")
 public class VentanaInspector extends javax.swing.JFrame{
@@ -47,11 +50,12 @@ public class VentanaInspector extends javax.swing.JFrame{
 	private JTextPane informacion;
 	private JButton set_patente,remove_patente;
 	private JButton confirmar,cerrar_sesion;
-	private TextField ingreso_patente;
+	private JFormattedTextField ingreso_patente;
 	private JLabel txt_patente,txt_parquimetros;
 	private JLabel txt_multas,txt_info,txt_error;
 	private Fecha date;
 	private String legajo;		
+	private MaskFormatter mask;
 	
 	public VentanaInspector(Connection c,String leg) {
 		super();
@@ -104,10 +108,14 @@ public class VentanaInspector extends javax.swing.JFrame{
 		informacion.setBorder(border);
 		informacion.setEditable(false);
 		getContentPane().add(informacion);
-		
-		ingreso_patente = new TextField();
-		ingreso_patente.setBounds(462, 35, 150, 30);
-		getContentPane().add(ingreso_patente);
+	
+		try {
+			ingreso_patente = new JFormattedTextField(new MaskFormatter("LLL###"));
+			ingreso_patente.setBounds(462, 35, 150, 30);
+			getContentPane().add(ingreso_patente);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		txt_patente = new JLabel();
 		txt_patente.setBounds(488, 5, 150, 30);
@@ -168,17 +176,12 @@ public class VentanaInspector extends javax.swing.JFrame{
 		set_patente.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String ingresada = ingreso_patente.getText();
-				if(validarPatente(ingresada)) {
 						if(getPosicion(ingreso_patente.getText()) == -1) {
 								model_patentes.add(0,ingresada);
 								lista_patentes.setModel(model_patentes);
-								ingreso_patente.setText("");
 						}
 						else 
-							JOptionPane.showMessageDialog(null, "Patente ya ingresada","Error", JOptionPane.ERROR_MESSAGE);					
-				}
-				else 
-					JOptionPane.showMessageDialog(null, "Patente invalida","Error", JOptionPane.ERROR_MESSAGE);	
+							JOptionPane.showMessageDialog(null, "Patente ya ingresada","Error", JOptionPane.ERROR_MESSAGE);			
 			}
 		});
 		
@@ -193,7 +196,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 					else 
 						seleccion = ingreso_patente.getText();
 					
-					if(validarPatente(seleccion)) {
 						if (getPosicion(seleccion) != -1) {
 							if(model_patentes.size() == 1)
 								model_patentes.removeAllElements();
@@ -203,9 +205,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 							}		
 						} else
 							JOptionPane.showMessageDialog(null, "La patente ingresada no se encuentra en la lista","Error", JOptionPane.ERROR_MESSAGE);
-							
-					}else
-						JOptionPane.showMessageDialog(null, "Patente invalida","Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -461,26 +460,6 @@ public class VentanaInspector extends javax.swing.JFrame{
 		model_patentes.removeAllElements();
 	}
 	
-	/* Controla que la patente ingresada sea de la forma LLL###*/
-	private boolean validarPatente(String patente) {
-		char a,b,c,d,e,f;
-		if(patente.length() != 6)
-			return false;
-		else {
-			a = patente.charAt(0);
-			b = patente.charAt(1);
-			c = patente.charAt(2);
-			d = patente.charAt(3);
-			e = patente.charAt(4);
-			f = patente.charAt(5);
-			if(!Character.isLetter(a) || !Character.isLetter(b) || !Character.isLetter(c))
-				return false;
-			else
-				if(!Character.isDigit(d) || !Character.isDigit(e) || !Character.isDigit(f))
-						return false;
-		}
-		return true;
-	}
 	
 	/*
 	 * Desconexion de la base de datos
