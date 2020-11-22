@@ -226,7 +226,7 @@ BEGIN
 DECLARE saldo DECIMAL(5,2);
 DECLARE tarifa DECIMAL(5, 2);
 DECLARE descuento DECIMAL(3,2);
-DECLARE minutos DECIMAL(20,2);
+DECLARE minutos int;
 DECLARE parq int;
 DECLARE new_saldo int;
 DECLARE cod_sql  CHAR(5) DEFAULT '00000';	 
@@ -257,17 +257,25 @@ Start TRANSACTION;
               SELECT u.tarifa INTO tarifa FROM ubicaciones as u NATURAL JOIN parquimetros as p WHERE parq = p.id_parq;
 
               /* Minutos transcurridos durante el estacionamiento */
-							SELECT TRUNCATE((TIME_TO_SEC(TIMEDIFF(CONCAT(CURDATE(),' ',CURTIME()),CONCAT(e.fecha_ent,' ',e.hora_ent)))/60), 2) INTO minutos FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL;						
-              
+							SELECT (TIMESTAMPDIFF(MINUTE,CONCAT(e.fecha_ent,' ',e.hora_ent), now())) INTO minutos 
+							FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL;		
+							
               SET new_saldo = TRUNCATE((saldo-(minutos*tarifa*(1-descuento))),2);					
 							
 							UPDATE estacionamientos as e SET e.fecha_sal = CURDATE(), e.hora_sal = CURTIME() WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL; 
-								
-							BEGIN
-								UPDATE tarjetas AS t SET t.saldo = new_saldo WHERE t.id_tarjeta=id_tarjeta;
-								SELECT 'Cierre' AS Operacion, TRUNCATE (minutos,2) as 'Tiempo transcurrido (min)', new_saldo as 'Saldo Actualizado';
-							END;
-
+							
+							/* Minimo valor de saldo permitido */
+							IF (new_saldo < -999.99) THEN
+								BEGIN
+									UPDATE tarjetas as t SET t.saldo = "-999.99" WHERE t.id_tarjeta = id_tarjeta;
+									SELECT 'Cierre' as Operacion, TRUNCATE (minutos,2) as 'Tiempo Transcurrido (min)', '-999.99' as 'Saldo Actualizado';
+								END;
+							ELSE
+								BEGIN
+									UPDATE tarjetas AS t SET t.saldo = new_saldo WHERE t.id_tarjeta=id_tarjeta;
+									SELECT 'Cierre' AS Operacion, TRUNCATE (minutos,2) as 'Tiempo transcurrido (min)', new_saldo as 'Saldo Actualizado';
+								END;
+							END IF;
 						END;
 					ELSE /* Si no tiene estacionamiento abierto ---> Apertura (Si tiene saldo > 0)*/
 						BEGIN

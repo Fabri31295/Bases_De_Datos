@@ -151,7 +151,8 @@ VALUES(666,6,'calle6',875);
 # -----------------------------------------------------------------------------
 # ESTACIONAMIENTOS
 
-
+INSERT INTO estacionamientos(id_tarjeta,id_parq,fecha_ent,hora_ent,fecha_sal,hora_sal)
+VALUES (9876,111,'2010-10-02','10:00:00', NULL, NULL);
 # -----------------------------------------------------------------------------
 # ACCEDE
 
