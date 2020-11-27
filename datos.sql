@@ -151,8 +151,14 @@ VALUES(666,6,'calle6',875);
 # -----------------------------------------------------------------------------
 # ESTACIONAMIENTOS
 
-INSERT INTO estacionamientos(id_tarjeta,id_parq,fecha_ent,hora_ent,fecha_sal,hora_sal)
-VALUES (9876,111,'2010-10-02','10:00:00', NULL, NULL);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES(curdate(),curtime(),NULL,NULL,9876,111);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES(curdate(),curtime(),NULL,NULL,1234,222);
+INSERT INTO estacionamientos(fecha_ent,hora_ent,fecha_sal,hora_sal,id_tarjeta,id_parq)
+VALUES(curdate(),curtime(),NULL,NULL,4567,333);
+
+
 # -----------------------------------------------------------------------------
 # ACCEDE
 

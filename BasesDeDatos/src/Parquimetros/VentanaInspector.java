@@ -179,6 +179,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 						if(getPosicion(ingreso_patente.getText()) == -1) {
 								model_patentes.add(0,ingresada);
 								lista_patentes.setModel(model_patentes);
+								ingreso_patente.setText("");
 						}
 						else 
 							JOptionPane.showMessageDialog(null, "Patente ya ingresada","Error", JOptionPane.ERROR_MESSAGE);			
