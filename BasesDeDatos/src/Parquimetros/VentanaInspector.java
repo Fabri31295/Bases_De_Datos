@@ -110,7 +110,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 		getContentPane().add(informacion);
 	
 		try {
-			ingreso_patente = new JFormattedTextField(new MaskFormatter("LLL###"));
+			ingreso_patente = new JFormattedTextField(new MaskFormatter("UUU###"));
 			ingreso_patente.setBounds(462, 35, 150, 30);
 			getContentPane().add(ingreso_patente);
 		} catch (ParseException e) {
