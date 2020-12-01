@@ -244,7 +244,7 @@ public class VentanaInspector extends javax.swing.JFrame{
 			java.sql.Statement stat = conexionBD.createStatement();
 			ResultSet res = stat.executeQuery("SELECT calle,numero,altura FROM parquimetros");
 			while(res.next()) 
-				model_parquimetros.add(0,res.getString("calle")+" "+res.getString("altura"));
+				model_parquimetros.add(0,res.getString("calle")+" "+res.getString("altura")+ " - N° "+res.getString("numero"));
 			
 			lista_parquimetros.setModel(model_parquimetros);
 			
