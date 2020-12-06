@@ -260,7 +260,7 @@ Start TRANSACTION;
 							SELECT (TIMESTAMPDIFF(MINUTE,CONCAT(e.fecha_ent,' ',e.hora_ent), now())) INTO minutos 
 							FROM estacionamientos as e WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL;		
 							
-              SET new_saldo = TRUNCATE((saldo-(minutos*tarifa*(1-descuento))),2);					
+              SET new_saldo = (saldo-(minutos*tarifa*(1-descuento)),2);					
 							
 							UPDATE estacionamientos as e SET e.fecha_sal = CURDATE(), e.hora_sal = CURTIME() WHERE id_tarjeta=e.id_tarjeta AND parq=e.id_parq AND e.fecha_sal is NULL AND e.hora_sal is NULL; 
 							
