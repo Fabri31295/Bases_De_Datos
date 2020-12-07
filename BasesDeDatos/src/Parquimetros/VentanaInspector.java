@@ -269,12 +269,20 @@ public class VentanaInspector extends javax.swing.JFrame{
 				erroneas = new ArrayList<String>();
 				java.sql.Statement stat = conexionBD.createStatement();
 				ResultSet res = null;
+				String pat;
 				for(int i = 0; i < model_patentes.size(); i++) {
-					res = stat.executeQuery("SELECT patente FROM automoviles WHERE patente = '"+model_patentes.get(i)+"';");	
+					pat = (String )model_patentes.get(i);
+					res = stat.executeQuery("SELECT patente FROM automoviles WHERE patente = '"+pat+"';");	
 					if(res.next())
 						patentes.add((String) model_patentes.get(i));
-					else
-						erroneas.add((String) model_patentes.get(i));
+					else { // miro si se encuentra en minusculas
+						pat = pat.toLowerCase();
+						res = stat.executeQuery("SELECT patente FROM automoviles WHERE patente = '"+pat+"';");	
+						if(res.next())
+							patentes.add((String) model_patentes.get(i));
+						else
+							erroneas.add((String) model_patentes.get(i));
+					}
 				}
 				res.close();
 		}catch(SQLException ex) {
@@ -361,6 +369,10 @@ public class VentanaInspector extends javax.swing.JFrame{
 			while(res.next()){ 	
 				if(patentes.contains(res.getString("patente"))){
 					patentes.remove(res.getString("patente"));
+				}else { // como la lista de patentes es en mayuscula, miro si estan en la base en mayusculas
+					if(patentes.contains(res.getString("patente").toUpperCase())) {
+						patentes.remove(res.getString("patente").toUpperCase());
+					}
 				}
 			}
 			res.close();
